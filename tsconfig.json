@@ -1,0 +1,46 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@core": ["src/app/core/index.ts"],
+      "@core/*": ["src/app/core/*"],
+      "@shared": ["src/app/shared/index.ts"],
+      "@shared/*": ["src/app/shared/*"],
+      "@ui": ["src/app/ui/index.ts"],
+      "@ui/*": ["src/app/ui/*"],
+      "@store": ["src/app/store/index.ts"],
+      "@store/*": ["src/app/store/*"],
+      "@data/*": ["src/app/data/*"],
+      "@features": ["src/app/features/index.ts"],
+      "@features/*": ["src/app/features/*"],
+      "@models": ["src/app/shared/models/index.ts"],
+      "@models/*": ["src/app/shared/models/*"],
+      "@environment/*": ["src/environments/*"]
+    },
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}

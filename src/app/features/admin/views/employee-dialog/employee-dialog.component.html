@@ -1,0 +1,86 @@
+<div class="p-8 bg-[#0d0d0d] text-white rounded-[32px] border border-white/5 shadow-2xl">
+  <header class="flex items-center gap-4 mb-8 pb-6 border-b border-white/5">
+    <div
+      class="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-600"
+    >
+      <mat-icon class="text-2xl">{{ isEditing ? 'edit' : 'person_add' }}</mat-icon>
+    </div>
+    <div>
+      <h2 class="text-xl font-black tracking-tight m-0">
+        {{ isEditing ? 'Editar Empleado' : 'Nuevo Empleado' }}
+      </h2>
+      <p class="text-[10px] opacity-30 font-bold uppercase tracking-[2px] mt-1">
+        Control de acceso Kimsa
+      </p>
+    </div>
+  </header>
+
+  <div class="flex flex-col gap-6 min-w-[350px]">
+    @if (!isEditing) {
+      <k-input
+        label="Contraseña Inicial"
+        type="password"
+        [(value)]="passText"
+        placeholder="Mínimo 6 caracteres"
+        icon="lock"
+      ></k-input>
+    }
+
+    <k-input
+      label="Nombre Completo"
+      placeholder="Ej: Juan Pérez"
+      [(value)]="userData.name"
+      icon="person"
+    ></k-input>
+
+    <k-input
+      label="Correo Electrónico"
+      type="email"
+      placeholder="juan@kimsa.com"
+      [(value)]="userData.email"
+      icon="alternate_email"
+    ></k-input>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-[10px] font-black opacity-30 uppercase tracking-[2px] ml-1"
+        >Rol en el Restaurante</label
+      >
+      <div
+        class="bg-white/5 border border-white/5 rounded-2xl px-5 py-4 flex items-center group focus-within:border-green-600/30 transition-all"
+      >
+        <mat-icon class="text-white/20 mr-3">badge</mat-icon>
+        <select
+          [(ngModel)]="userData.role"
+          class="bg-transparent border-none outline-none w-full text-sm font-bold text-white appearance-none cursor-pointer"
+        >
+          <option value="waiter" class="bg-[#0d0d0d]">Mozo / Waiter</option>
+          <option value="kitchen" class="bg-[#0d0d0d]">Cocina / Kitchen</option>
+          <option value="cashier" class="bg-[#0d0d0d]">Cajero / Cashier</option>
+          <option value="admin" class="bg-[#0d0d0d]">Administrador / Admin</option>
+        </select>
+        <mat-icon class="opacity-20 text-base">expand_more</mat-icon>
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+      <div
+        class="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-red-500 text-[10px] font-black text-center animate-pulse"
+      >
+        {{ errorMessage() }}
+      </div>
+    }
+  </div>
+
+  <footer class="flex justify-end gap-4 mt-10 pt-8 border-t border-white/5">
+    <button
+      (click)="dialogRef.close()"
+      class="bg-transparent border-none text-white/30 text-[10px] font-black uppercase tracking-widest cursor-pointer hover:text-white transition-colors"
+      [disabled]="loading()"
+    >
+      Cancelar
+    </button>
+    <k-button (kClick)="onSave()" [loading]="loading()" customClass="!px-10">
+      {{ isEditing ? 'Actualizar' : 'Registrar Empleado' }}
+    </k-button>
+  </footer>
+</div>

@@ -1,0 +1,42 @@
+{
+  "name": "kimsa-web",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development"
+  },
+  "private": true,
+  "packageManager": "npm@10.9.0",
+  "dependencies": {
+    "@angular/animations": "^21.2.13",
+    "@angular/cdk": "^21.2.11",
+    "@angular/common": "^21.2.13",
+    "@angular/compiler": "^21.2.13",
+    "@angular/core": "^21.2.13",
+    "@angular/fire": "^20.0.1",
+    "@angular/forms": "^21.2.13",
+    "@angular/material": "^21.2.11",
+    "@angular/platform-browser": "^21.2.13",
+    "@angular/router": "^21.2.13",
+    "esbuild": "^0.28.0",
+    "firebase": "11.10.0",
+    "highlight.js": "^11.11.1",
+    "lucide-angular": "^1.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "0.16.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.11",
+    "@angular/cli": "^21.2.11",
+    "@angular/compiler-cli": "^21.2.13",
+    "@tailwindcss/postcss": "^4.3.0",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.14",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^5.9.3"
+  }
+}

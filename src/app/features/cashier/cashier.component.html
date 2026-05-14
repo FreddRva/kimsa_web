@@ -1,0 +1,161 @@
+<div class="relative flex h-screen flex-col overflow-hidden bg-[#020202] font-outfit text-white">
+  <!-- THEMED BACKGROUND -->
+  <div class="pointer-events-none absolute inset-0 z-0">
+    <img src="assets/images/FondoMozo.png" class="w-full h-full object-cover" />
+    <div class="absolute inset-0 bg-black/85 mix-blend-darken"></div>
+  </div>
+
+  <!-- TOP HEADER -->
+  <header class="relative z-50 flex h-[90px] items-center justify-between bg-black/40 px-8">
+    <!-- BRANDING -->
+    <div class="flex items-center gap-4">
+      <div
+        class="flex items-center justify-center rounded-xl bg-gradient-to-r from-red-600 to-[#920000] p-2 shadow-[0_0_10px_rgba(220,38,38,0.3)]"
+      >
+        <mat-icon class="text-white text-[20px] w-5 h-5 leading-none"
+          >account_balance_wallet</mat-icon
+        >
+      </div>
+      <span class="text-[18px] font-black tracking-[2px] text-white">KIMSA</span>
+      <div
+        class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)] ml-2"
+        title="Conectado"
+      ></div>
+    </div>
+
+    <!-- NAVIGATION (DESKTOP) -->
+    <nav class="flex gap-2">
+      <button
+        (click)="selectedTab.set(0)"
+        [ngClass]="
+          selectedTab() === 0
+            ? 'bg-white/10 text-white'
+            : 'bg-transparent text-white/25 hover:text-white/50'
+        "
+        class="flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all duration-300"
+      >
+        <mat-icon
+          [class.text-red-500]="selectedTab() === 0"
+          class="text-[18px] w-[18px] h-[18px] leading-none"
+          >auto_awesome_mosaic</mat-icon
+        >
+        <span
+          [class.font-black]="selectedTab() === 0"
+          [class.font-semibold]="selectedTab() !== 0"
+          class="text-[11px] tracking-[1px]"
+          >VENTAS</span
+        >
+      </button>
+      <button
+        (click)="selectedTab.set(1)"
+        [ngClass]="
+          selectedTab() === 1
+            ? 'bg-white/10 text-white'
+            : 'bg-transparent text-white/25 hover:text-white/50'
+        "
+        class="flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all duration-300"
+      >
+        <mat-icon
+          [class.text-red-500]="selectedTab() === 1"
+          class="text-[18px] w-[18px] h-[18px] leading-none"
+          >history</mat-icon
+        >
+        <span
+          [class.font-black]="selectedTab() === 1"
+          [class.font-semibold]="selectedTab() !== 1"
+          class="text-[11px] tracking-[1px]"
+          >HISTORIAL</span
+        >
+      </button>
+      <button
+        (click)="selectedTab.set(2)"
+        [ngClass]="
+          selectedTab() === 2
+            ? 'bg-white/10 text-white'
+            : 'bg-transparent text-white/25 hover:text-white/50'
+        "
+        class="flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all duration-300"
+      >
+        <mat-icon
+          [class.text-red-500]="selectedTab() === 2"
+          class="text-[18px] w-[18px] h-[18px] leading-none"
+          >analytics</mat-icon
+        >
+        <span
+          [class.font-black]="selectedTab() === 2"
+          [class.font-semibold]="selectedTab() !== 2"
+          class="text-[11px] tracking-[1px]"
+          >CAJA CHICA</span
+        >
+      </button>
+    </nav>
+
+    <!-- USER ACTION MENU -->
+    <div class="relative flex items-center">
+      <button
+        (click)="toggleMenu()"
+        class="flex items-center gap-2 rounded-xl bg-white/[0.03] p-2 hover:bg-white/[0.06] transition-colors"
+        title="Perfil"
+      >
+        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-green-600">
+          <span class="text-[12px] font-bold text-white">{{ userName().charAt(0).toUpperCase() }}</span>
+        </div>
+        <mat-icon class="text-[18px] text-white/25 w-[18px] h-[18px] leading-none transition-transform" [class.rotate-180]="menuOpen()"
+          >keyboard_arrow_down</mat-icon
+        >
+      </button>
+
+      @if (menuOpen()) {
+        <div
+          class="animate-fade absolute right-0 top-[52px] z-[120] w-56 rounded-[20px] border border-white/10 bg-[#151515] p-2 shadow-2xl"
+        >
+          <p class="border-b border-white/5 px-3 py-2 text-xs font-bold text-white">
+            {{ userName().toUpperCase() }}
+          </p>
+          <button
+            type="button"
+            class="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm font-bold text-red-500 hover:bg-white/5"
+            (click)="closeMenuAndLogout()"
+          >
+            <mat-icon class="text-lg w-[18px] h-[18px] leading-none">logout</mat-icon>
+            CERRAR SESIÓN
+          </button>
+        </div>
+      }
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="relative z-10 flex-1 overflow-hidden">
+    @switch (selectedTab()) {
+      @case (0) {
+        <cashier-nexus-view
+          [orders]="filteredOrders()"
+          [selectedOrderId]="selectedOrderId()"
+          [selectedOrder]="selectedOrder()"
+          [filter]="filter()"
+          [selectedMethod]="selectedMethod()"
+          (filterChange)="filter.set($event)"
+          (selectOrder)="selectOrder($event)"
+          (methodChange)="selectedMethod.set($event)"
+          (confirmPayment)="onConfirmPayment($event)"
+          (cancelOrder)="onCancelOrder($event)"
+        ></cashier-nexus-view>
+      }
+      @case (1) {
+        <cashier-history-view
+          [paidOrders]="paidOrders()"
+          [cancelledOrders]="cancelledOrders()"
+          [totalDay]="stats().total"
+        ></cashier-history-view>
+      }
+      @case (2) {
+        <cashier-balance-view 
+          [stats]="stats()"
+          (onPrint)="onPrintSummary()"
+          (onCloseShift)="onCloseShift()"
+        ></cashier-balance-view>
+      }
+    }
+  </main>
+</div>

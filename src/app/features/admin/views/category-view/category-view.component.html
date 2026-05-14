@@ -1,0 +1,27 @@
+<k-card padding="lg" radius="xl">
+  <header class="flex justify-between items-center mb-10">
+    <h3 class="text-[22px] font-black m-0">Gestión de Categorías</h3>
+    <k-button (kClick)="openCategoryDialog()">+ Nueva Categoría</k-button>
+  </header>
+  
+  <div class="flex flex-col gap-2.5">
+    @for (c of categories; track c.id) {
+      <div class="bg-white/[0.02] border border-white/[0.03] rounded-[20px] p-5 px-7.5 flex items-center gap-5 hover:bg-white/[0.04] transition-all">
+        <span class="flex-1 opacity-40 font-bold text-xs italic">#{{ c.id.slice(0,4) }}</span>
+        <strong class="flex-[5] text-sm font-black tracking-wide">{{ c.name.toUpperCase() }}</strong>
+        <span class="flex-[2] flex items-center gap-2 opacity-50">
+          <mat-icon class="text-xl">{{ c.iconName || 'restaurant' }}</mat-icon>
+          <span class="text-[11px] font-bold">{{ c.iconName || 'restaurant' }}</span>
+        </span>
+        <div class="flex gap-2.5 ml-auto">
+          <k-button variant="glass" customClass="!p-2 w-10 h-10" (kClick)="openCategoryDialog(c)">✎</k-button>
+          <k-button variant="danger" customClass="!p-2 w-10 h-10" (kClick)="deleteCategory(c.id, c.name)">🗑</k-button>
+        </div>
+      </div>
+    } @empty {
+      <div class="py-20 text-center opacity-30 font-bold text-sm uppercase tracking-widest border border-dashed border-white/5 rounded-[32px]">
+        No hay categorías registradas en el sistema
+      </div>
+    }
+  </div>
+</k-card>

@@ -1,0 +1,58 @@
+<div class="h-full p-10 overflow-y-auto no-scrollbar animate-in fade-in slide-in-from-bottom-8 duration-700">
+  <div class="max-w-7xl mx-auto flex flex-col gap-10">
+    <k-page-header title="Historial de Ventas" subtitle="Resumen detallado de la jornada actual">
+      <div actions>
+        <k-card padding="sm" radius="md" customClass="bg-green-600/10 border-green-600/20">
+          <div class="flex flex-col px-4">
+            <span class="text-[9px] font-black text-green-600 opacity-60 tracking-widest uppercase">Total Día</span>
+            <span class="text-xl font-black italic">S/ {{ formatPrice(totalDay) }}</span>
+          </div>
+        </k-card>
+      </div>
+    </k-page-header>
+
+    <!-- Filtros -->
+    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+      @for (f of ['Todos', 'Efectivo', 'Tarjeta', 'Yape', 'ANULADOS']; track f) {
+        <button 
+          class="rounded-full px-4 py-2 text-[10px] font-black tracking-[0.5px] transition-all"
+          [ngClass]="currentFilter() === f ? 'bg-white/10 text-white border border-white/20' : 'bg-white/[0.02] text-white/40 hover:bg-white/[0.05]'"
+          (click)="currentFilter.set(f)">
+          {{ f | uppercase }}
+        </button>
+      }
+    </div>
+
+    <!-- Lista de Ventas -->
+    <div class="flex flex-col gap-3">
+      @for (order of filteredOrders; track order.id) {
+        <div class="flex items-center justify-between rounded-[20px] border border-white/[0.05] bg-white/[0.02] p-4 hover:bg-white/[0.04] transition-colors">
+          <div class="flex items-center gap-4">
+            <mat-icon [class]="order.status === 'cancelled' ? 'text-red-500' : (order.isDelivery ? 'text-orange-500' : 'text-green-500')">
+              {{ order.status === 'cancelled' ? 'cancel' : (order.isDelivery ? 'shopping_bag' : 'check_circle') }}
+            </mat-icon>
+            <div class="flex flex-col">
+              <span class="text-[13px] font-black tracking-[0.5px] text-white uppercase">
+                {{ order.isDelivery ? (order.customerName || 'PARA LLEVAR') : 'MESA ' + (order.tableNumber || order.tableId) }}
+              </span>
+              <span class="text-[9px] font-extrabold text-white/30 uppercase">
+                {{ order.status === 'cancelled' ? 'Anulado' : 'Cobrado con ' + order.paymentMethod }}
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-6">
+            <span class="text-[10px] font-black text-white/40">{{ formatFullDateTime(order.paidAt || order.timestamp) }}</span>
+            <span class="text-[16px] font-black italic" [class.text-white/50]="order.status === 'cancelled'" [class.line-through]="order.status === 'cancelled'">
+              S/ {{ formatPrice(order.total) }}
+            </span>
+          </div>
+        </div>
+      } @empty {
+        <div class="flex flex-col items-center justify-center py-20">
+          <mat-icon class="text-[48px] w-12 h-12 text-white/10 mb-4">history</mat-icon>
+          <span class="text-[11px] font-black tracking-[1.5px] text-white/20">NO HAY REGISTROS</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

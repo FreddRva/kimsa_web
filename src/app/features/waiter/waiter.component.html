@@ -1,0 +1,178 @@
+<div class="relative flex h-screen flex-col overflow-hidden bg-[#020202] font-outfit text-white">
+  <!-- Fondo Flutter: imagen + oscurecido -->
+  <div
+    class="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-darken"
+    style="background-image: url('assets/images/FondoMozo.png')"
+  ></div>
+  <div class="pointer-events-none absolute inset-0 z-0 bg-black/80"></div>
+
+  <div class="relative z-10 flex min-h-0 flex-1 flex-row overflow-hidden">
+    <waiter-sidebar
+      [categories]="categories()"
+      [selectedCategory]="selectedCategory()"
+      (categorySelected)="onSidebarCategory($event)"
+    ></waiter-sidebar>
+
+    <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <waiter-top-bar
+        class="relative z-50"
+        [dateTimeLabel]="clockLabel()"
+        [searchValue]="searchQuery()"
+        [userName]="mozoDisplayName()"
+        (searchValueChange)="onSearchFromBar($event)"
+        (logout)="onLogout()"
+      ></waiter-top-bar>
+
+      <div class="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-4 pb-4 pt-0 md:flex-row md:gap-6 md:px-6 md:pb-6">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden md:flex-[5]">
+          <waiter-menu-view
+            class="flex flex-1 min-h-0 flex-col overflow-hidden"
+            [products]="filteredProducts()"
+            [selectedCategory]="selectedCategory()"
+            [isPopular]="isPopular()"
+            [selectedTable]="selectedTable()"
+            [isDelivery]="isDelivery()"
+            [customerName]="customerName()"
+            (mesaChip)="onMesaChip()"
+            (llevarChip)="onLlevarChip()"
+            (popularChip)="onPopularChip()"
+            (addItem)="onAddItem($event)"
+            (showDetails)="onShowDetails($event)"
+          ></waiter-menu-view>
+        </div>
+
+        <div class="flex h-[38vh] min-h-0 shrink-0 flex-col md:h-auto md:max-w-[420px] md:flex-[2]">
+          <waiter-summary-view
+            class="flex flex-1 flex-col min-h-0 overflow-hidden w-full min-w-0 md:min-w-[280px]"
+            [items]="currentOrder()"
+            [total]="orderTotal()"
+            [selectedTable]="selectedTable()"
+            [isDelivery]="isDelivery()"
+            [currentDateTime]="clockLabel()"
+            (updateQty)="onUpdateQty($event)"
+            (updateNotes)="onUpdateNotes($event)"
+            (sendToKitchen)="onSendToKitchen()"
+            (onReset)="onResetSummary()"
+          ></waiter-summary-view>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (showTableModal()) {
+    <div
+      class="fixed inset-0 z-[250] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md"
+      (click)="showTableModal.set(false)"
+    >
+      <div
+        class="flex flex-col max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-3xl border border-white/10 bg-[#0a0a0a] p-6 shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="mb-4 flex shrink-0 items-center justify-between">
+          <h2 class="text-xl font-black tracking-tight text-white">Mesas</h2>
+          <button
+            type="button"
+            class="rounded-xl p-2 text-white/50 hover:bg-white/10 hover:text-white"
+            (click)="showTableModal.set(false)"
+          >
+            <span class="material-symbols-rounded">close</span>
+          </button>
+        </div>
+        <waiter-tables-view
+          class="flex flex-1 flex-col min-h-0 overflow-hidden"
+          [tables]="tables()"
+          (selectTable)="selectTable($event)"
+          (onDelivery)="onToggleDelivery(); showTableModal.set(false)"
+        ></waiter-tables-view>
+      </div>
+    </div>
+  }
+
+  @if (showVariationModal()) {
+    @if (selectedProductForVariation(); as pv) {
+    <div
+      class="fixed inset-0 z-[260] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md"
+      (click)="showVariationModal.set(false)"
+    >
+      <div
+        class="w-full max-w-md rounded-3xl border border-white/10 bg-[#151515] p-6 shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <h3 class="mb-4 text-lg font-black text-white">{{ pv.name }}</h3>
+        <div class="flex flex-col gap-2">
+          @for (v of $any(pv.variations); track v.name) {
+            <button
+              type="button"
+              class="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left font-bold text-white transition hover:bg-k-red/20"
+              (click)="onAddVariation(v)"
+            >
+              <span>{{ v.name }}</span>
+              <span class="text-k-red">S/ {{ v.price | number : '1.2-2' }}</span>
+            </button>
+          }
+        </div>
+        <button
+          type="button"
+          class="mt-4 w-full rounded-xl py-3 text-sm font-bold text-white/50 hover:bg-white/5"
+          (click)="showVariationModal.set(false)"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+    }
+  }
+
+  @if (showDetailsModal()) {
+    @if (selectedProduct(); as pd) {
+    <div
+      class="fixed inset-0 z-[260] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md"
+      (click)="showDetailsModal.set(false)"
+    >
+      <div
+        class="w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-[#151515] shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex max-h-[70vh] flex-col md:flex-row">
+          <div class="h-48 shrink-0 bg-black/50 md:h-auto md:w-2/5">
+            @if (pd.imageUrl || pd.image) {
+              <img [src]="pd.imageUrl || pd.image" class="h-full w-full object-cover" alt="" />
+            }
+          </div>
+          <div class="flex flex-1 flex-col gap-4 p-6">
+            <h3 class="text-2xl font-black text-white">{{ pd.name }}</h3>
+            @if (pd.description) {
+              <p class="text-sm text-white/50">{{ pd.description }}</p>
+            }
+            <p class="text-2xl font-black text-k-red">S/ {{ pd.price | number : '1.2-2' }}</p>
+            <div class="mt-auto flex gap-2">
+              <button
+                type="button"
+                class="flex-1 rounded-2xl border border-white/10 py-3 font-bold text-white/70 hover:bg-white/5"
+                (click)="showDetailsModal.set(false)"
+              >
+                Cerrar
+              </button>
+              <button
+                type="button"
+                class="flex-1 rounded-2xl bg-gradient-to-br from-k-red to-[#8b0000] py-3 font-black text-white shadow-lg"
+                (click)="onAddItem(pd); showDetailsModal.set(false)"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  }
+
+  @if (toastMessage()) {
+    <div
+      class="animate-fade fixed bottom-8 left-1/2 z-[270] -translate-x-1/2 rounded-2xl bg-k-green px-8 py-3 text-center text-xs font-black uppercase tracking-widest text-white shadow-2xl"
+    >
+      {{ toastMessage() }}
+    </div>
+  }
+</div>

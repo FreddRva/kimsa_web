@@ -1,0 +1,87 @@
+<div class="relative flex h-screen w-screen overflow-hidden bg-[#0f0f0f] font-outfit text-white">
+  <!-- Fondo tipo Flutter admin oscuro (_buildAnimatedBackground) -->
+  <div class="pointer-events-none absolute inset-0 bg-[#020202]"></div>
+  <div
+    class="pointer-events-none absolute -left-[200px] -top-[200px] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(22,163,74,0.12)_0%,transparent_68%)] blur-2xl"
+  ></div>
+  <div
+    class="pointer-events-none absolute -bottom-[100px] -right-[100px] h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.08)_0%,transparent_70%)] blur-2xl"
+  ></div>
+  <div
+    class="admin-orb-float-a pointer-events-none absolute left-[-15%] top-[20%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(22,163,74,0.06)_0%,transparent_72%)] blur-xl"
+  ></div>
+  <div
+    class="admin-orb-float-b pointer-events-none absolute bottom-[10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.06)_0%,transparent_72%)] blur-xl"
+  ></div>
+
+  <div class="relative z-10 flex h-full min-h-0 w-full">
+    <k-sidebar
+      appearance="dark"
+      subtitle="PORTAL ADMIN"
+      [items]="navItems"
+      [selectedTab]="selectedTab()"
+      (tabChange)="onTabChange($event)"
+    >
+    </k-sidebar>
+
+    <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <k-header
+        shell="admin"
+        appearance="dark"
+        [title]="getTabTitle()"
+        [userName]="userName()"
+        userRole="Administrador"
+        [unreadCount]="notificationService.unreadCount()"
+        (logout)="onLogout()"
+        (notificationsClick)="isNotificationCenterOpen.set(true)"
+      >
+      </k-header>
+
+      @if (isNotificationCenterOpen()) {
+        <k-notification-center (close)="isNotificationCenterOpen.set(false)"></k-notification-center>
+      }
+
+      <div class="no-scrollbar min-h-0 flex-1 overflow-y-auto p-6 md:p-10">
+        <div class="mx-auto flex max-w-[1400px] flex-col gap-6 animate-fade">
+          @switch (selectedTab()) {
+            @case (0) {
+              <app-dashboard-view [stats]="stats()" [paidOrders]="paidOrders()"> </app-dashboard-view>
+            }
+            @case (1) {
+              <app-menu-view
+                [filteredProducts]="filteredProducts()"
+                [categories]="categories()"
+              >
+              </app-menu-view>
+            }
+            @case (2) {
+              <app-category-view
+                [categories]="categories()"
+              >
+              </app-category-view>
+            }
+            @case (3) {
+              <app-station-distribution-view
+                [categories]="categories()"
+                [products]="products()"
+              >
+              </app-station-distribution-view>
+            }
+            @case (4) {
+              <app-table-view [tables]="tables()"></app-table-view>
+            }
+            @case (5) {
+              <app-employee-view
+                [users]="users()"
+              >
+              </app-employee-view>
+            }
+            @case (6) {
+              <app-settings-view></app-settings-view>
+            }
+          }
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

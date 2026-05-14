@@ -1,0 +1,140 @@
+<div class="flex flex-col gap-10 animate-in fade-in duration-700">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <k-card padding="md" radius="lg" [hoverable]="true">
+      <div class="flex flex-col">
+        <span class="text-[10px] font-black opacity-30 tracking-[2px] uppercase">Ventas Hoy</span>
+        <div class="flex items-end gap-2 mt-4">
+          <span class="text-3xl font-black text-white">S/ {{ formatPrice(stats?.todaySales || 0) }}</span>
+          <span class="text-xs text-green-600 font-bold mb-1.5">+{{ stats?.orderCount || 0 }} pedidos</span>
+        </div>
+      </div>
+    </k-card>
+
+    <k-card padding="md" radius="lg" [hoverable]="true">
+      <div class="flex flex-col">
+        <span class="text-[10px] font-black opacity-30 tracking-[2px] uppercase">Ticket Promedio</span>
+        <div class="flex items-end gap-2 mt-4">
+          <span class="text-3xl font-black text-white">S/ {{ formatPrice(stats?.avgTicket || 0) }}</span>
+        </div>
+      </div>
+    </k-card>
+
+    <k-card padding="md" radius="lg" [hoverable]="true">
+      <div class="flex flex-col">
+        <span class="text-[10px] font-black opacity-30 tracking-[2px] uppercase">Mesas Activas</span>
+        <div class="flex items-end gap-2 mt-4">
+          <span class="text-3xl font-black text-white">{{ stats?.activeTables || 0 }}</span>
+          <span class="text-xs opacity-40 font-bold mb-1.5">En servicio</span>
+        </div>
+      </div>
+    </k-card>
+
+    <k-card padding="md" radius="lg" [hoverable]="true">
+      <div class="flex flex-col">
+        <span class="text-[10px] font-black opacity-30 tracking-[2px] uppercase">Ventas Mes</span>
+        <div class="flex items-end gap-2 mt-4">
+          <span class="text-3xl font-black text-white">S/ {{ formatPrice(stats?.monthlySales || 0) }}</span>
+        </div>
+      </div>
+    </k-card>
+  </div>
+
+  <div class="flex flex-col gap-10">
+    <!-- Fila 2: Rendimiento y Productos -->
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-10">
+      <div class="xl:col-span-3 flex flex-col">
+        <k-card padding="lg" radius="xl" customClass="h-full flex flex-col justify-between">
+          <h3 class="text-xl font-black mb-10 uppercase tracking-widest text-green-600">Rendimiento Semanal</h3>
+          <div class="flex items-end justify-between h-64 gap-6 px-4">
+            @for (day of weeklySales; track day.day) {
+              <div class="flex-1 flex flex-col items-center gap-4 group h-full justify-end">
+                <div class="w-full bg-k-primary/20 rounded-t-lg transition-all group-hover:bg-k-primary relative flex justify-center" 
+                     [style.height.%]="day.height">
+                  <div class="absolute -top-10 bg-k-primary text-white text-[11px] font-black px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap shadow-lg">
+                    S/{{ day.total | number:'1.0-0' }}
+                  </div>
+                </div>
+                <span class="text-sm font-black opacity-30 group-hover:opacity-100 transition-opacity">{{ day.day }}</span>
+              </div>
+            }
+          </div>
+        </k-card>
+      </div>
+
+      <div class="xl:col-span-1 flex flex-col">
+        <k-card padding="lg" radius="xl" customClass="h-full">
+          <h3 class="text-sm font-black mb-8 uppercase tracking-widest">Top Productos Hoy</h3>
+          <div class="flex flex-col gap-6">
+            @for (p of topProducts; track p.name) {
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold">{{ p.name }}</span>
+                    <span class="text-[10px] opacity-30 font-black uppercase">{{ p.count }} unidades</span>
+                  </div>
+                  <span class="text-xs font-black text-white/60">S/ {{ formatPrice(p.total) }}</span>
+                </div>
+                <div class="w-full h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                  <div class="h-full bg-green-600 rounded-full shadow-[0_0_10px_rgba(22,163,74,0.5)]" [style.width.%]="(p.total / topProducts[0].total) * 100"></div>
+                </div>
+              </div>
+            } @empty {
+              <div class="py-10 text-center opacity-20 font-bold text-xs">Sin ventas hoy</div>
+            }
+          </div>
+        </k-card>
+      </div>
+    </div>
+
+    <!-- Fila 3: Últimas Transacciones -->
+    <k-card padding="lg" radius="xl">
+      <header class="flex justify-between items-center mb-10">
+        <div>
+          <h3 class="text-2xl font-black tracking-tight">Últimas Transacciones</h3>
+          <p class="text-xs opacity-40 font-bold mt-1.5 uppercase tracking-widest text-green-500">Sincronizado en tiempo real</p>
+        </div>
+        <k-button variant="glass" size="sm">Ver Historial</k-button>
+      </header>
+
+      <div class="overflow-x-auto scroll-none">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="text-[11px] font-black opacity-30 tracking-[3px] uppercase border-b border-white/5">
+              <th class="py-5 px-4">HORA</th>
+              <th class="py-5 px-4">MESA</th>
+              <th class="py-5 px-4">ESTADO</th>
+              <th class="py-5 px-4 text-right">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/[0.03]">
+            @for (order of paidOrders.slice(0, 8); track order.id) {
+              <tr class="group hover:bg-white/[0.02] transition-colors cursor-default">
+                <td class="py-5 px-4">
+                  <span class="text-[14px] font-bold">{{ formatTime(order.paidAt || order.timestamp) }}</span>
+                </td>
+                <td class="py-5 px-4">
+                  <div class="flex flex-col">
+                    <span class="text-[14px] font-black">Mesa {{ order.tableName || order.tableId }}</span>
+                    <span class="text-[11px] opacity-30 font-bold">Ref: #{{ order.id.slice(0, 6) }}</span>
+                  </div>
+                </td>
+                <td class="py-5 px-4">
+                  <k-badge [variant]="order.status === 'paid' ? 'success' : 'info'" [dot]="true">
+                    {{ order.status === 'paid' ? 'PAGADO' : order.status }}
+                  </k-badge>
+                </td>
+                <td class="py-5 px-4 text-right">
+                  <span class="text-base font-black text-green-600 italic">S/ {{ formatPrice(order.total) }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="py-20 text-center opacity-20 font-bold text-sm">No hay transacciones recientes</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </k-card>
+  </div>
+</div>

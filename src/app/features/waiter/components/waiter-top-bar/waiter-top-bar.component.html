@@ -1,0 +1,74 @@
+<div class="h-[100px] shrink-0 px-4 py-2 md:px-10">
+  <div
+    class="flex h-full min-h-[72px] items-center gap-2 rounded-[20px] border border-white/[0.08] bg-black/40 px-3 py-2 backdrop-blur-md md:gap-4 md:px-4"
+  >
+    <div class="flex min-w-0 flex-1 flex-col justify-center">
+      <h1 class="truncate text-base font-black tracking-[0.25em] text-white md:text-[22px]">K I M S A</h1>
+      <p class="mt-0.5 truncate text-[9px] font-extrabold uppercase tracking-wide text-white/25">
+        {{ dateTimeLabel }}
+      </p>
+    </div>
+
+    <div
+      class="hidden max-w-[200px] shrink-0 items-center gap-2 rounded-full border border-k-green/20 bg-k-green/10 px-2.5 py-1.5 sm:inline-flex"
+    >
+      <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-k-green shadow-[0_0_4px_rgba(22,163,74,0.45)]"></span>
+      <span class="truncate text-[9px] font-black uppercase tracking-wide text-k-green">Sincronizado</span>
+      <span class="material-symbols-rounded shrink-0 text-sm text-k-green">cloud_done</span>
+    </div>
+
+    <div class="mx-1 hidden min-w-0 flex-1 md:block md:max-w-[300px]">
+      <div
+        class="flex h-12 w-full items-center rounded-2xl border border-white/[0.08] bg-white/[0.02] px-3"
+      >
+        <span class="material-symbols-rounded shrink-0 text-lg text-white/30">search</span>
+        <input
+          type="search"
+          class="ml-2 min-w-0 flex-1 bg-transparent py-3 text-[13px] font-bold text-white outline-none placeholder:text-[11px] placeholder:font-black placeholder:uppercase placeholder:tracking-wide placeholder:text-white/20"
+          placeholder="BUSCAR PRODUCTO..."
+          [value]="searchValue"
+          (input)="onSearchInput($event)"
+        />
+      </div>
+    </div>
+
+    <div class="relative shrink-0">
+      <button
+        type="button"
+        class="flex max-w-[200px] items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] py-2 pl-2 pr-3 transition hover:bg-white/[0.06]"
+        (click)="toggleMenu()"
+      >
+        <div
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-k-red/15 text-xs font-black text-k-red"
+        >
+          {{ userName.charAt(0).toUpperCase() || 'M' }}
+        </div>
+        <span class="hidden min-w-0 truncate text-xs font-extrabold text-white md:block">{{
+          userName.split(' ')[0] || 'Mozo'
+        }}</span>
+        <span
+          class="material-symbols-rounded text-white/30 transition-transform"
+          [class.rotate-180]="menuOpen()"
+        >expand_more</span>
+      </button>
+
+      @if (menuOpen()) {
+        <div
+          class="animate-fade absolute right-0 top-[52px] z-[120] w-56 rounded-[20px] border border-white/10 bg-[#151515] p-2 shadow-2xl"
+        >
+          <p class="border-b border-white/5 px-3 py-2 text-xs font-bold text-white">
+            {{ userName.toUpperCase() || 'MOZO' }}
+          </p>
+          <button
+            type="button"
+            class="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm font-bold text-k-red hover:bg-white/5"
+            (click)="closeMenuAndLogout()"
+          >
+            <span class="material-symbols-rounded text-lg">logout</span>
+            CERRAR SESIÓN
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
