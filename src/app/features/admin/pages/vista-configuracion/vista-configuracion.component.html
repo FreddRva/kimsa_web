@@ -1,0 +1,44 @@
+<div class="max-w-2xl animate-fade">
+  <k-card padding="lg" radius="xl">
+    <k-page-header 
+      title="Configuración" 
+      subtitle="Identidad de marca y facturación"
+      icon="tune"
+      class="mb-10"
+    ></k-page-header>
+
+    <div class="flex flex-col gap-8">
+      <k-input
+        label="Nombre del Negocio"
+        [(value)]="businessName"
+        placeholder="Ej. KIMSA RESTOBAR"
+        icon="business"
+      ></k-input>
+
+      <k-input
+        label="RUC de la Empresa"
+        [(value)]="ruc"
+        placeholder="Ej. 20123456789"
+        icon="badge"
+      ></k-input>
+
+      <k-input
+        label="Token API SUNAT"
+        [(value)]="sunatToken"
+        placeholder="Token de acceso para comprobantes"
+        icon="vpn_key"
+      ></k-input>
+
+      <k-toggle 
+        label="Facturación Electrónica" 
+        subtitle="Activar envío real a SUNAT" 
+        icon="verified" 
+        [(checked)]="isSunatActive">
+      </k-toggle>
+
+      <k-button size="lg" customClass="w-full !py-5" (kClick)="saveSettings()" [loading]="isSaving()">
+        Guardar Configuración
+      </k-button>
+    </div>
+  </k-card>
+</div>

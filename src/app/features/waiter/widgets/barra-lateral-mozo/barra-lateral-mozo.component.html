@@ -1,0 +1,21 @@
+<div class="fixed left-6 top-6 bottom-6 w-24 flex flex-col items-center">
+  <k-category-bar
+    [items]="categoryItems()"
+    [selected]="selectedCategory()"
+    (select)="onSelectCategory($event)"
+  >
+    <!-- Logo en el slot superior -->
+    <div top class="relative z-20 flex flex-col items-center">
+      <div 
+        (click)="onSelectPopular()"
+        class="w-16 h-16 rounded-[22px] overflow-hidden border border-white/10 bg-white/5 shadow-xl group cursor-pointer transition-all hover:scale-105 hover:border-k-green/30"
+      >
+        <img 
+          src="assets/images/Logo.png" 
+          alt="Kimsa" 
+          class="w-full h-full object-cover"
+        >
+      </div>
+    </div>
+  </k-category-bar>
+</div>

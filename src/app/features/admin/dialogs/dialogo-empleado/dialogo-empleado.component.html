@@ -1,0 +1,65 @@
+<div class="p-8 bg-[#0d0d0d] text-white rounded-[32px] border border-white/5 shadow-2xl">
+  <k-page-header 
+    [title]="isEditing ? 'Editar Empleado' : 'Nuevo Empleado'" 
+    subtitle="Control de acceso Kimsa"
+    [icon]="isEditing ? 'edit' : 'person_add'"
+    class="mb-8"
+  ></k-page-header>
+
+  <div class="flex flex-col gap-6 min-w-[350px]">
+    <k-input
+      [label]="isEditing ? 'Nueva Contraseña' : 'Contraseña Inicial'"
+      type="password"
+      [(value)]="passText"
+      [placeholder]="isEditing ? 'Dejar en blanco para no cambiar' : 'Mínimo 6 caracteres'"
+      icon="lock"
+    ></k-input>
+
+    <k-input
+      label="Nombre Completo"
+      placeholder="Ej: Juan Pérez"
+      [(value)]="userData.name"
+      icon="person"
+    ></k-input>
+
+    <k-input
+      label="Correo Electrónico"
+      type="email"
+      placeholder="juan@kimsa.com"
+      [(value)]="userData.email"
+      icon="alternate_email"
+    ></k-input>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-[10px] font-black opacity-30 uppercase tracking-[2px] ml-1">Rol en el Restaurante</label>
+      <div class="bg-white/5 border border-white/5 rounded-2xl px-5 py-4 flex items-center group focus-within:border-k-green/30 transition-all">
+        <span class="material-symbols-rounded text-white/20 mr-3">badge</span>
+        <select
+          [(ngModel)]="userData.role"
+          class="bg-transparent border-none outline-none w-full text-sm font-bold text-white appearance-none cursor-pointer"
+        >
+          <option value="waiter" class="bg-[#0d0d0d]">Mozo / Waiter</option>
+          <option value="kitchen" class="bg-[#0d0d0d]">Cocina / Kitchen</option>
+          <option value="cashier" class="bg-[#0d0d0d]">Cajero / Cashier</option>
+          <option value="admin" class="bg-[#0d0d0d]">Administrador / Admin</option>
+        </select>
+        <span class="material-symbols-rounded opacity-20 text-base">expand_more</span>
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+      <k-badge variant="danger" customClass="w-full !justify-center py-4 animate-pulse">
+        {{ errorMessage() }}
+      </k-badge>
+    }
+  </div>
+
+  <footer class="flex justify-end gap-4 mt-10 pt-8 border-t border-white/5">
+    <k-button variant="ghost" size="sm" (kClick)="dialogRef.close()" [disabled]="loading()">
+      Cancelar
+    </k-button>
+    <k-button (kClick)="onSave()" [loading]="loading()" customClass="!px-10">
+      {{ isEditing ? 'Actualizar' : 'Registrar Empleado' }}
+    </k-button>
+  </footer>
+</div>

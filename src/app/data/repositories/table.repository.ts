@@ -1,29 +1,31 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, doc, updateDoc, addDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { RestaurantTable, TableStatus } from '../../core/domain/table/table.model';
+import { TableRepositoryPort } from '../../core/domain/table/table.repository.port';
 
 @Injectable({ providedIn: 'root' })
-export class TableRepository {
+export class TableRepository implements TableRepositoryPort {
   private firestore = inject(Firestore);
 
-  getTables(): Observable<any[]> {
+  getTables(): Observable<RestaurantTable[]> {
     const col = collection(this.firestore, 'tables');
-    return collectionData(col, { idField: 'id' });
+    return collectionData(col, { idField: 'id' }) as Observable<RestaurantTable[]>;
   }
   
-  addTable(data: any) { 
+  async addTable(data: Partial<RestaurantTable>): Promise<unknown> { 
     return addDoc(collection(this.firestore, 'tables'), data); 
   }
   
-  updateTable(id: string, data: any) { 
-    return updateDoc(doc(this.firestore, `tables/${id}`), data); 
+  async updateTable(id: string, data: Partial<RestaurantTable>): Promise<void> { 
+    await updateDoc(doc(this.firestore, `tables/${id}`), data); 
   }
   
-  deleteTable(id: string) { 
-    return updateDoc(doc(this.firestore, `tables/${id}`), { isDeleted: true }); 
+  async deleteTable(id: string): Promise<void> { 
+    await updateDoc(doc(this.firestore, `tables/${id}`), { isDeleted: true }); 
   }
   
-  updateTableStatus(tableId: string, status: string, orderId: string | null = null) {
-    return updateDoc(doc(this.firestore, `tables/${tableId}`), { status, currentOrderId: orderId });
+  async updateTableStatus(tableId: string, status: TableStatus, orderId: string | null = null): Promise<void> {
+    await updateDoc(doc(this.firestore, `tables/${tableId}`), { status, currentOrderId: orderId });
   }
 }

@@ -1,0 +1,33 @@
+<div class="p-8 bg-[#0d0d0d] text-white rounded-[32px] border border-white/5 shadow-2xl">
+  <k-page-header 
+    [title]="isEditing ? 'Editar Categoría' : 'Nueva Categoría'" 
+    subtitle="Organización del menú"
+    [icon]="isEditing ? 'edit' : 'add_circle'"
+    class="mb-8"
+  ></k-page-header>
+
+  <div class="flex flex-col gap-6 min-w-[350px]">
+    <k-input label="Nombre de Categoría" [(value)]="catData.name" icon="category" placeholder="Ej. PLATOS DE FONDO"></k-input>
+    
+    <k-input label="Icono (Material Symbol)" [(value)]="catData.iconName" icon="image" placeholder="Ej. restaurant, local_bar..."></k-input>
+
+    <div class="flex flex-col gap-3">
+      <span class="text-[10px] font-black opacity-30 uppercase tracking-[2px] ml-1">Previsualización</span>
+      <div class="bg-white/5 rounded-2xl p-6 border border-white/5 flex flex-col items-center gap-3">
+        <div class="w-16 h-16 rounded-2xl bg-k-green/10 flex items-center justify-center text-k-green">
+          <span class="material-symbols-rounded text-4xl">{{ catData.iconName }}</span>
+        </div>
+        <span class="text-sm font-black uppercase tracking-widest">{{ catData.name || 'SIN NOMBRE' }}</span>
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+      <k-badge variant="danger" customClass="w-full !justify-center py-4">{{ errorMessage() }}</k-badge>
+    }
+  </div>
+
+  <footer class="flex justify-end gap-4 mt-10 pt-8 border-t border-white/5">
+    <k-button variant="ghost" (kClick)="dialogRef.close()">Cancelar</k-button>
+    <k-button size="lg" customClass="!px-10" (kClick)="onSave()" [loading]="loading()">Guardar Categoría</k-button>
+  </footer>
+</div>

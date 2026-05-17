@@ -1,0 +1,96 @@
+<div class="h-full flex flex-col min-h-0">
+  @if (order) {
+    <k-card padding="none" radius="xl" customClass="flex-1 flex flex-col bg-white/[0.01] border-white/10 overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-white/5 px-6 py-6">
+        <div class="flex items-center gap-4">
+          <span class="material-symbols-rounded text-k-green">receipt_long</span>
+          <span class="text-[10px] font-black tracking-[2px] text-white uppercase">Resumen de Cuenta</span>
+        </div>
+        <k-button variant="danger" size="sm" customClass="!p-0 w-9 h-9" (kClick)="cancelOrder.emit(order)">
+          <span class="material-symbols-rounded text-xl">delete_forever</span>
+        </k-button>
+      </div>
+
+      <!-- Items List -->
+      <div class="flex-1 overflow-y-auto p-8 no-scrollbar">
+        <div class="flex flex-col gap-5">
+          @for (item of order.items; track $index) {
+            <nexus-order-item [item]="item"></nexus-order-item>
+          }
+        </div>
+      </div>
+
+      <!-- Footer Panel de Pago -->
+      <div class="bg-white/[0.03] p-8 rounded-b-[32px] border-t border-white/5">
+        <!-- Totales -->
+        <div class="flex flex-col gap-2.5 mb-8">
+          <div class="flex justify-between items-center opacity-30">
+            <span class="text-[10px] font-black uppercase tracking-widest">Subtotal</span>
+            <span class="text-sm font-bold">S/ {{ (order.total / 1.18) | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between items-center opacity-30">
+            <span class="text-[10px] font-black uppercase tracking-widest">IGV (18%)</span>
+            <span class="text-sm font-bold">S/ {{ (order.total * 0.18 / 1.18) | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between items-end mt-2">
+            <span class="text-[11px] font-black uppercase tracking-[3px] text-white/20">Total a Pagar</span>
+            <span class="text-4xl font-black text-k-green italic leading-none tracking-tighter">S/ {{ order.total | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Métodos de Pago -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          @for (method of ['EFECTIVO', 'TARJETA', 'YAPE']; track method; let i = $index) {
+            <button (click)="methodChange.emit(i)"
+                    [class]="'flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 ' + (selectedMethod === i ? 'border-k-green bg-k-green/10 text-white' : 'border-white/5 bg-white/[0.02] text-white/30 hover:bg-white/5')">
+              <span class="material-symbols-rounded text-xl">{{ i === 0 ? 'payments' : (i === 1 ? 'credit_card' : 'qr_code') }}</span>
+              <span class="text-[8px] font-black tracking-widest uppercase">{{ method }}</span>
+            </button>
+          }
+        </div>
+
+        <!-- Comprobante Selector -->
+        <div class="flex items-center justify-between mb-6">
+          <span class="text-[9px] font-black tracking-[2px] text-white/30 uppercase">Tipo Documento</span>
+          <div class="flex gap-1.5">
+            @for (doc of ['Ticket', 'Boleta', 'Factura']; track doc) {
+              <k-button 
+                [variant]="selectedDocumentType === doc ? 'glass' : 'ghost'"
+                size="sm"
+                customClass="!px-3 !h-7 !text-[8px] !font-black"
+                (kClick)="documentTypeChange.emit(doc)">
+                {{ doc.toUpperCase() }}
+              </k-button>
+            }
+          </div>
+        </div>
+        
+        @if (selectedDocumentType !== 'Ticket') {
+          <div class="mb-6 animate-fade">
+            <k-input 
+              [label]="selectedDocumentType === 'Boleta' ? 'DNI del Cliente' : 'RUC de la Empresa'"
+              [placeholder]="'Ingresar número...'"
+              [value]="customerDocument"
+              (valueChange)="customerDocumentChange.emit($event)"
+              icon="badge"
+            ></k-input>
+          </div>
+        }
+
+        <!-- Botón de Pago Modular -->
+        <k-hold-button (kComplete)="confirmPayment.emit()">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-rounded text-2xl text-k-green">check_circle</span>
+            <span class="text-[11px] font-black uppercase tracking-[4px]">Confirmar Pago</span>
+          </div>
+        </k-hold-button>
+      </div>
+    </k-card>
+  } @else {
+    <k-card padding="none" radius="xl" customClass="flex-1 flex flex-col items-center justify-center opacity-10 bg-white/[0.01]">
+      <span class="material-symbols-rounded text-7xl mb-4">point_of_sale</span>
+      <span class="text-[10px] font-black tracking-[4px] uppercase text-center">Selecciona una mesa<br>para ver el resumen</span>
+    </k-card>
+  }
+</div>

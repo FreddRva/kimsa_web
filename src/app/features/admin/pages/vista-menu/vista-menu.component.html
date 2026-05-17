@@ -1,0 +1,24 @@
+<k-card padding="lg">
+  <k-page-header 
+    title="Catálogo de Productos" 
+    subtitle="Gestiona tus platillos y bebidas"
+    icon="restaurant_menu"
+  >
+    <k-button (kClick)="openProductDialog()">+ Nuevo Producto</k-button>
+  </k-page-header>
+
+  <div class="flex flex-col gap-2.5 mt-8">
+    @for (p of filteredProducts(); track p.id) {
+      <product-admin-item 
+        [product]="p" 
+        (edit)="openProductDialog($event)"
+        (delete)="deleteProduct($event.id, $event.name)">
+      </product-admin-item>
+    }
+ @empty {
+      <div class="py-20 text-center opacity-20 font-black text-[10px] uppercase tracking-[3px]">
+        No hay productos registrados
+      </div>
+    }
+  </div>
+</k-card>

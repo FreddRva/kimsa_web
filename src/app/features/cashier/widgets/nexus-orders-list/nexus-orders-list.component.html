@@ -1,0 +1,63 @@
+<k-card padding="none" radius="xl" customClass="h-full flex flex-col overflow-hidden bg-white/[0.02]">
+  <!-- Header con Filtros -->
+  <div class="flex items-center justify-between border-b border-white/5 px-6 py-5">
+    <span class="text-[10px] font-black tracking-[3px] text-white/40 uppercase">Cuentas Activas</span>
+    <div class="flex gap-2">
+      @for (f of ['TODAS', 'SALÓN', 'PARA LLEVAR']; track f) {
+        <k-button 
+          [variant]="currentFilter === f ? 'glass' : 'ghost'"
+          size="sm"
+          customClass="!px-4 !h-8 !text-[9px]"
+          (kClick)="onFilterChange(f)">
+          {{ f }}
+        </k-button>
+      }
+    </div>
+  </div>
+
+  <!-- Cuerpo: Lista de Pedidos -->
+  <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+    <div class="flex flex-col gap-4">
+      @for (order of orders; track order.id) {
+        <div 
+          [class]="'group flex cursor-pointer items-center rounded-[24px] border p-5 transition-all duration-300 ' + (selectedId === order.id ? 'border-k-green/50 bg-k-green/[0.08] shadow-lg scale-[1.02]' : 'border-white/5 bg-white/[0.03] hover:bg-white/[0.05]')"
+          (click)="select.emit(order)">
+          
+          <!-- Icono -->
+          <div [class]="'flex h-14 w-14 items-center justify-center rounded-2xl transition-colors ' + (selectedId === order.id ? 'bg-k-green/20' : 'bg-white/5')">
+            <span class="material-symbols-rounded text-2xl" [class.text-k-green]="selectedId === order.id" [class.text-white/20]="selectedId !== order.id">
+              {{ order.isDelivery ? 'shopping_bag' : 'table_restaurant' }}
+            </span>
+          </div>
+          
+          <!-- Info -->
+          <div class="ml-5 flex-1">
+            <h3 class="text-base font-black tracking-tight text-white uppercase">
+              {{ order.isDelivery ? (order.customerName || 'PARA LLEVAR') : 'MESA ' + (order.tableNumber || order.tableId) }}
+            </h3>
+            <div class="mt-1 flex items-center gap-3">
+              <span class="text-[9px] font-black text-white/40 uppercase tracking-widest">{{ order.waiterName || 'STAFF' }}</span>
+              <div class="w-1 h-1 rounded-full bg-white/20"></div>
+              <span class="text-[9px] font-black text-white/30">{{ formatTime(order.timestamp) }}</span>
+            </div>
+          </div>
+          
+          <!-- Total y Badge -->
+          <div class="flex flex-col items-end gap-2">
+            <span [class]="'text-xl font-black italic ' + (selectedId === order.id ? 'text-k-green' : 'text-white')">
+              S/ {{ (order.total || 0) | number:'1.2-2' }}
+            </span>
+            <k-badge [variant]="order.status === 'waiting_payment' ? 'success' : 'info'" [dot]="true" size="sm">
+              {{ order.status === 'waiting_payment' ? 'LISTO PARA COBRAR' : 'EN SERVICIO' }}
+            </k-badge>
+          </div>
+        </div>
+      } @empty {
+        <div class="flex h-64 flex-col items-center justify-center opacity-10">
+          <span class="material-symbols-rounded text-7xl mb-4">receipt_long</span>
+          <span class="text-[10px] font-black tracking-[4px] uppercase">Sin comandas activas</span>
+        </div>
+      }
+    </div>
+  </div>
+</k-card>

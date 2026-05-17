@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { KButtonComponent } from '../../../ui/base/button/button.component';
 
 export interface NavItem {
   id: number;
@@ -11,11 +11,10 @@ export interface NavItem {
 @Component({
   selector: 'k-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [KButtonComponent],
   templateUrl: './sidebar.component.html',
 })
 export class KSidebarComponent {
-  /** `light` = portal admin Flutter (fondo claro); `dark` = POS / caja */
   @Input() appearance: 'light' | 'dark' = 'dark';
   @Input() subtitle: string = 'PANEL';
   @Input() items: NavItem[] = [];

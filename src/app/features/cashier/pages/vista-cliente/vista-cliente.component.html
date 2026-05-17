@@ -1,0 +1,58 @@
+<div class="flex flex-col gap-10 animate-fade">
+  <k-page-header title="Fidelización" subtitle="Registra clientes para marketing y facturación" icon="person_add">
+    <k-button (kClick)="saveCustomer()" [loading]="isSaving()" [disabled]="!name">Guardar Cliente</k-button>
+  </k-page-header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+    <!-- Formulario -->
+    <k-card padding="lg" radius="xl" customClass="bg-white/[0.02] border-white/5 h-fit">
+      <div class="flex flex-col gap-6">
+        <div class="flex gap-4">
+          <k-input label="DNI" [(value)]="dni" icon="badge" placeholder="8 dígitos" customClass="flex-1"></k-input>
+          <k-button 
+            variant="glass" 
+            size="sm" 
+            customClass="mt-6 !h-14 !px-6" 
+            (kClick)="searchDni()" 
+            [loading]="isSearchingDni()"
+            [disabled]="!hasDni()">
+            <span class="material-symbols-rounded text-xl">search</span>
+          </k-button>
+        </div>
+
+        <k-input label="Nombre del Cliente" [(value)]="name" icon="person" placeholder="Ej. Juan Pérez"></k-input>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <k-input label="Celular" [(value)]="phone" icon="call" placeholder="999..."></k-input>
+          <k-input label="Red Social" [(value)]="social" icon="share" placeholder="@usuario"></k-input>
+        </div>
+
+        <k-input label="Fecha de Nacimiento" type="date" [(value)]="birthday" icon="cake"></k-input>
+
+        <footer class="flex justify-end gap-3 mt-4 pt-6 border-t border-white/5">
+          <k-button variant="ghost" (kClick)="resetForm()">Limpiar</k-button>
+          <k-button (kClick)="saveCustomer()" [loading]="isSaving()" [disabled]="!name">Registrar</k-button>
+        </footer>
+      </div>
+    </k-card>
+
+    <!-- Lista Reciente -->
+    <k-card padding="none" radius="xl" customClass="bg-white/[0.01] border-white/5 flex flex-col h-[600px]">
+      <div class="p-6 border-b border-white/5">
+        <span class="text-[10px] font-black uppercase tracking-[3px] opacity-30">Últimos Registrados</span>
+      </div>
+      <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+        <div class="flex flex-col gap-4">
+          @for (c of customers().slice(0, 10); track c.id) {
+            <customer-item [customer]="c"></customer-item>
+          } @empty {
+            <div class="flex h-full flex-col items-center justify-center opacity-10 py-20">
+              <span class="material-symbols-rounded text-6xl mb-4">groups</span>
+              <span class="text-[10px] font-black tracking-[4px] uppercase">Sin clientes</span>
+            </div>
+          }
+        </div>
+      </div>
+    </k-card>
+  </div>
+</div>

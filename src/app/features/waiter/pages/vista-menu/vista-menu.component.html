@@ -1,0 +1,154 @@
+<div class="flex h-full min-h-0 flex-col animate-fade">
+  <!-- Barra de Filtros / Destino (Estilo Cápsula Slim) -->
+  <div class="no-scrollbar mb-6 overflow-x-auto pb-2">
+    <div class="flex min-w-max items-center gap-3">
+      <!-- Selector de Mesa -->
+      <k-button
+        (kClick)="onMesaChip()"
+        [variant]="mesaActive() ? 'primary' : 'glass'"
+        size="sm"
+        customClass="!rounded-full !px-6 !py-2.5 !tracking-widest !transition-all !duration-500 {{
+          mesaActive() ? 'shadow-[0_0_15px_rgba(34,197,94,0.4)]' : ''
+        }}"
+      >
+        <span class="material-symbols-rounded text-lg">{{
+          mesaActive() ? 'check_circle' : 'table_bar'
+        }}</span>
+        <span class="text-[10px] font-black uppercase">{{ mesaLabel() }}</span>
+      </k-button>
+
+      <!-- Selector Para Llevar -->
+      <k-button
+        (kClick)="onLlevarChip()"
+        [variant]="llevarActive() ? 'primary' : 'glass'"
+        size="sm"
+        customClass="!rounded-full !px-6 !py-2.5 !tracking-widest !transition-all !duration-500 {{
+          llevarActive()
+            ? '!bg-blue-500 !border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.4)]'
+            : ''
+        }}"
+      >
+        <span class="material-symbols-rounded text-lg">{{
+          llevarActive() ? 'check_circle' : 'shopping_bag'
+        }}</span>
+        <span class="text-[10px] font-black uppercase">{{ llevarLabel() }}</span>
+      </k-button>
+
+      <div class="w-[1px] h-6 bg-white/10 mx-2"></div>
+
+      <!-- Filtro Populares -->
+      <k-button
+        (kClick)="productFacade.isPopular.set(!isPopular())"
+        [variant]="isPopular() ? 'luxury' : 'glass'"
+        size="sm"
+        customClass="!rounded-full !px-6 !py-2.5 !tracking-widest !transition-all !duration-500 {{
+          isPopular() ? 'shadow-[0_0_15px_rgba(212,175,55,0.4)]' : ''
+        }}"
+      >
+        <span class="material-symbols-rounded text-lg">local_fire_department</span>
+        <span class="text-[10px] font-black uppercase">POPULARES</span>
+      </k-button>
+
+      <!-- MARCA DE AGUA -->
+      <span class="hidden md:block ml-55 text-2xl font-black italic text-white/5 uppercase">
+        {{ watermark() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Grid de Productos -->
+  <div class="no-scrollbar min-h-0 flex-1 overflow-y-auto pb-20">
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-1">
+      @for (p of products(); track p.id) {
+        <k-card
+          [variant]="'glass'"
+          [radius]="'xl'"
+          [padding]="'none'"
+          [clickable]="true"
+          customClass="h-[340px] group border-white/10"
+          (kClick)="onShowDetails(p)"
+        >
+          <!-- Imagen de Fondo con gradiente -->
+          <div class="relative h-44 overflow-hidden">
+            @if (p.imageUrl) {
+              <img
+                [src]="p.imageUrl"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+              />
+            } @else {
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-k-green/10 to-transparent flex items-center justify-center"
+              >
+                <span class="material-symbols-rounded text-6xl opacity-5 italic">restaurant</span>
+              </div>
+            }
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"
+            ></div>
+
+            <!-- Etiqueta de Precio Flotante -->
+            @if (!p.variations || p.variations.length === 0) {
+              <div
+                class="absolute top-4 right-4 px-3 py-1.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 shadow-xl"
+              >
+                <span class="text-[11px] font-black text-k-green italic tracking-tighter"
+                  >S/ {{ p.price | number: '1.2-2' }}</span
+                >
+              </div>
+            }
+          </div>
+
+          <!-- Información del Plato -->
+          <div class="flex-1 p-5 flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+              <h3
+                class="text-[12px] font-black text-white uppercase tracking-tight leading-tight group-hover:text-k-green transition-colors"
+              >
+                {{ p.name }}
+              </h3>
+              <p class="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">
+                {{ p.description || 'Especialidad de la Casa' }}
+              </p>
+            </div>
+
+            <!-- Acciones / Variaciones -->
+            <div class="mt-auto">
+              @if (p.variations && p.variations.length > 0) {
+                <div class="flex flex-wrap gap-2">
+                  @for (v of p.variations; track v.name) {
+                    <button
+                      (click)="$event.stopPropagation(); addVariationToCart(p, v)"
+                      class="flex-1 flex flex-col items-center py-2 px-1 rounded-xl bg-white/5 border border-white/5 hover:bg-k-green hover:text-black hover:shadow-[0_0_10px_rgba(34,197,94,0.3)] transition-all group/btn"
+                    >
+                      <span
+                        class="text-[7px] font-black uppercase opacity-40 group-hover/btn:text-black leading-none mb-1"
+                        >{{ v.name }}</span
+                      >
+                      <span class="text-[10px] font-black tracking-tighter italic"
+                        >S/ {{ v.price | number: '1.2-2' }}</span
+                      >
+                    </button>
+                  }
+                </div>
+              } @else {
+                <k-button
+                  variant="glass"
+                  size="sm"
+                  customClass="w-full !rounded-2xl !py-3 hover:!bg-k-green hover:!text-black"
+                  (kClick)="$event.stopPropagation(); onAddItem(p)"
+                >
+                  Añadir Orden
+                </k-button>
+              }
+            </div>
+          </div>
+        </k-card>
+      } @empty {
+        <div class="col-span-full flex flex-col items-center justify-center py-32 opacity-10">
+          <span class="material-symbols-rounded text-7xl mb-4 italic">restaurant_menu</span>
+          <span class="text-[10px] font-black tracking-[4px] uppercase">Menú no disponible</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

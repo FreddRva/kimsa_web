@@ -1,0 +1,55 @@
+<div class="flex flex-col gap-10 animate-fade">
+  <!--CABECERA DE PÁGINA-->
+  <k-page-header
+    title="Distribución de Estaciones"
+    subtitle="Asigna cada plato a su punto de impresión"
+    icon="router"
+  >
+    <k-button
+      [variant]="stationFacade.hasChanges() ? 'luxury' : 'glass'"
+      [disabled]="!stationFacade.hasChanges() || isSaving()"
+      (kClick)="saveChanges()"
+    >
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-rounded">{{ isSaving() ? 'sync' : 'save_as' }}</span>
+        <span class="text-[10px] font-black uppercase tracking-widest">{{
+          isSaving() ? 'Guardando...' : 'Guardar Cambios'
+        }}</span>
+      </div>
+    </k-button>
+  </k-page-header>
+
+  <!--MUESTRA LA LISTA DE PRODUCTOS POR CATEGORÍA-->
+  <div class="flex flex-col gap-12">
+    @for (cat of categories(); track cat.id) {
+      @if (getProductsByCategory(cat.id).length > 0) {
+        <section class="flex flex-col gap-6">
+          <div class="flex items-center gap-4 px-2">
+            <span class="text-[10px] font-black text-k-green uppercase tracking-[4px]">{{
+              cat.name
+            }}</span>
+            <div class="h-px flex-1 bg-white/5"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @for (product of getProductsByCategory(cat.id); track product.id) {
+              <k-product-station-item [product]="product"></k-product-station-item>
+            }
+          </div>
+        </section>
+      }
+    }
+  </div>
+  <!--MENSAJE FLOTANTE-->
+  @if (toastMessage()) {
+    <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-bounce">
+      <div
+        class="bg-black/80 backdrop-blur-xl border border-k-green/20 px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-4"
+      >
+        <span class="material-symbols-rounded text-k-green">check_circle</span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-white">{{
+          toastMessage()
+        }}</span>
+      </div>
+    </div>
+  }
+</div>

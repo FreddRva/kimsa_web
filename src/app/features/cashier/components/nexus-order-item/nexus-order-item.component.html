@@ -1,0 +1,12 @@
+<div class="flex items-start gap-4 animate-fade">
+  <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[10px] font-black text-k-green">
+    {{ item.quantity }}x
+  </div>
+  <div class="flex-1 flex flex-col">
+    <span class="text-[13px] font-black text-white/90 uppercase tracking-tight">{{ item.name }}</span>
+    @if (item.notes) {
+      <span class="text-[10px] font-bold text-white/30 italic mt-0.5">{{ item.notes }}</span>
+    }
+  </div>
+  <span class="text-sm font-black text-white/60">S/ {{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+</div>

@@ -50,9 +50,7 @@
               "browser": "browser"
             },
             "tsConfig": "tsconfig.app.json",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": [],
             "assets": [
               {
                 "glob": "**/*",
@@ -82,7 +80,14 @@
                   "maximumError": "25kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": {
+                  "inline": false
+                }
+              }
             },
             "development": {
               "optimization": false,

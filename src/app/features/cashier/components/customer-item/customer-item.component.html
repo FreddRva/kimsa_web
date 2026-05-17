@@ -1,0 +1,12 @@
+<div class="flex items-center gap-4 bg-white/[0.02] p-4 rounded-2xl border border-white/5 transition-all hover:bg-white/[0.05] animate-fade">
+  <div class="w-10 h-10 rounded-full bg-k-green/10 flex items-center justify-center text-k-green font-black">
+    {{ (customer.name || 'C').charAt(0).toUpperCase() }}
+  </div>
+  <div class="flex-1">
+    <span class="text-xs font-black uppercase block tracking-tight text-white/90">{{ customer.name }}</span>
+    <span class="text-[9px] opacity-30 font-bold tracking-widest">{{ customer.dni || 'SIN DNI' }}</span>
+  </div>
+  @if (customer.phone) {
+    <k-badge variant="info" size="sm">{{ customer.phone }}</k-badge>
+  }
+</div>

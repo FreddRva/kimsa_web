@@ -1,0 +1,81 @@
+<div class="flex flex-col gap-10 animate-fade">
+  <k-page-header 
+    title="Base de Clientes" 
+    subtitle="Fidelización y Marketing"
+    icon="groups"
+  >
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="w-full md:w-64">
+        <k-input
+          [value]="filterText()"
+          (valueChange)="filterText.set($event)"
+          placeholder="Nombre, DNI o Celular..."
+          icon="search"
+        ></k-input>
+      </div>
+
+      <k-button 
+        [variant]="showBirthdaysOnly() ? 'luxury' : 'glass'"
+        size="sm"
+        customClass="!px-6"
+        (kClick)="showBirthdaysOnly.set(!showBirthdaysOnly())"
+      >
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-rounded text-lg">cake</span>
+          <span class="text-[10px] font-black uppercase tracking-widest">Cumpleañeros del Mes</span>
+        </div>
+      </k-button>
+    </div>
+  </k-page-header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    @for (customer of filteredCustomers(); track customer.id) {
+      <k-card padding="lg" radius="xl" [hoverable]="true">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center font-black text-white text-lg">
+            {{ (customer.name || 'C').charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <h3 class="text-[14px] font-black text-white uppercase truncate">{{ customer.name || 'Cliente sin nombre' }}</h3>
+            <p class="text-[10px] font-black text-white/30 uppercase tracking-[1px] mt-0.5">DNI: {{ customer.dni || '---' }}</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            @if (customer.birthday) {
+              <div class="w-8 h-8 bg-pink-500/10 rounded-xl flex items-center justify-center text-pink-500">
+                <span class="material-symbols-rounded text-base">cake</span>
+              </div>
+            }
+            <k-button variant="glass" customClass="!p-0 w-8 h-8" (kClick)="editCustomer(customer)">
+              <span class="material-symbols-rounded text-base">edit</span>
+            </k-button>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-[9px] font-black text-white/20 uppercase tracking-[1px]">Celular</p>
+            <p class="text-xs font-bold text-white/80 mt-1">{{ customer.phone || '---' }}</p>
+          </div>
+          <div>
+            <p class="text-[9px] font-black text-white/20 uppercase tracking-[1px]">Red Social</p>
+            <p class="text-xs font-bold text-white/80 mt-1">{{ customer.social || '---' }}</p>
+          </div>
+        </div>
+
+        @if (customer.birthday) {
+          <div class="mt-4 flex items-center gap-2 text-pink-500/80">
+            <span class="text-[9px] font-black uppercase tracking-[2px]">Aniversario:</span>
+            <span class="text-xs font-bold">{{ customer.birthday }}</span>
+          </div>
+        }
+      </k-card>
+    } @empty {
+      <div class="col-span-full flex flex-col items-center justify-center py-20 opacity-10">
+        <span class="material-symbols-rounded text-6xl mb-3">groups</span>
+        <span class="text-[10px] font-black uppercase tracking-[3px]">No se encontraron clientes</span>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<k-card padding="lg" radius="xl">
+  <k-page-header 
+    title="Gestión del Equipo" 
+    subtitle="Administra accesos y roles de tus colaboradores"
+    icon="people"
+  >
+    <k-button (kClick)="openEmployeeDialog()">+ Nuevo Empleado</k-button>
+  </k-page-header>
+
+  <div class="mt-8">
+    <div class="flex flex-col gap-2.5 mt-8">
+      @for (u of staff(); track u.uid) {
+        <k-employee-admin-item 
+          [employee]="u" 
+          (onEdit)="openEmployeeDialog($event)" 
+          (onDelete)="deleteEmployee($event)">
+        </k-employee-admin-item>
+      } @empty {
+        <div class="py-20 text-center opacity-20 font-black text-[10px] uppercase tracking-[3px] border border-dashed border-white/5 rounded-[32px]">
+          No hay empleados registrados en el equipo
+        </div>
+      }
+    </div>
+  </div>
+</k-card>

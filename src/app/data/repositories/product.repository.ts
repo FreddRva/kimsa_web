@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, doc, updateDoc, addDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Product } from '@shared/models';
+import { Product } from '../../core/domain/product/product.model';
+import { ProductRepositoryPort } from '../../core/domain/product/product.repository.port';
 
 @Injectable({ providedIn: 'root' })
-export class ProductRepository {
+export class ProductRepository implements ProductRepositoryPort {
   private firestore = inject(Firestore);
 
   getProducts(): Observable<Product[]> {
@@ -12,19 +13,19 @@ export class ProductRepository {
     return collectionData(col, { idField: 'id' }) as Observable<Product[]>;
   }
   
-  addProduct(data: Partial<Product>) { 
-    return addDoc(collection(this.firestore, 'products'), data); 
+  async addProduct(data: Partial<Product>): Promise<void> { 
+    await addDoc(collection(this.firestore, 'products'), data); 
   }
   
-  updateProduct(id: string, data: Partial<Product>) { 
-    return updateDoc(doc(this.firestore, `products/${id}`), data); 
+  async updateProduct(id: string, data: Partial<Product>): Promise<void> { 
+    await updateDoc(doc(this.firestore, `products/${id}`), data); 
   }
   
-  deleteProduct(id: string) { 
-    return updateDoc(doc(this.firestore, `products/${id}`), { isDeleted: true }); 
+  async deleteProduct(id: string): Promise<void> { 
+    await updateDoc(doc(this.firestore, `products/${id}`), { isDeleted: true }); 
   }
   
-  updateProductStation(id: string, station: string) { 
-    return updateDoc(doc(this.firestore, `products/${id}`), { station }); 
+  async updateProductStation(id: string, station: string): Promise<void> { 
+    await updateDoc(doc(this.firestore, `products/${id}`), { station }); 
   }
 }

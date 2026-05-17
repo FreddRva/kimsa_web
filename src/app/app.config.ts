@@ -1,20 +1,17 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { provideAuth, getAuth } from '@angular/fire/auth';
-import { provideFirestore, getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from '@angular/fire/firestore';
-import { getApp } from '@angular/fire/app';
-import { environment } from '../environments/environment';
+/**AQUI ESTA LLAMANDO A LOS PROVEEDORES PARA ENCENDER LA APLICACION*/
+import { firebaseProviders } from './core/infrastructure/firebase/firebase.providers';
+import { repositoryProviders } from './core/infrastructure/repository.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth()),
-    provideFirestore(() => initializeFirestore(getApp(), {
-      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-    })),
-  ]
+    provideHttpClient(),
+    ...firebaseProviders,
+    ...repositoryProviders,
+  ],
 };

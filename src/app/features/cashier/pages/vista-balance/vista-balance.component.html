@@ -1,0 +1,199 @@
+<div class="flex flex-col gap-10 animate-fade">
+  <k-page-header
+    title="Cierre de Caja"
+    subtitle="Resumen de ingresos del turno actual"
+    icon="analytics"
+  >
+    <div class="flex gap-4">
+      <k-button variant="glass" (kClick)="onPrint()">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-rounded">print</span>
+          <span class="text-[10px] font-black uppercase tracking-widest">Imprimir Resumen</span>
+        </div>
+      </k-button>
+      <k-button variant="luxury" (kClick)="onCloseShift()">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-rounded">lock_open</span>
+          <span class="text-[10px] font-black uppercase tracking-widest">Cerrar Turno</span>
+        </div>
+      </k-button>
+    </div>
+  </k-page-header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Efectivo -->
+    <k-card padding="lg" radius="xl" customClass="bg-white/[0.02] border-white/5">
+      <div class="flex flex-col gap-4">
+        <div
+          class="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500"
+        >
+          <span class="material-symbols-rounded text-3xl">payments</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-black opacity-30 uppercase tracking-[3px]">Efectivo</p>
+          <p class="text-3xl font-black italic mt-1 text-white">
+            S/ {{ stats().cash | number: '1.2-2' }}
+          </p>
+        </div>
+      </div>
+    </k-card>
+
+    <!-- Digital -->
+    <k-card padding="lg" radius="xl" customClass="bg-white/[0.02] border-white/5">
+      <div class="flex flex-col gap-4">
+        <div
+          class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500"
+        >
+          <span class="material-symbols-rounded text-3xl">qr_code</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-black opacity-30 uppercase tracking-[3px]">Digital / Yape</p>
+          <p class="text-3xl font-black italic mt-1 text-white">
+            S/ {{ stats().digital | number: '1.2-2' }}
+          </p>
+        </div>
+      </div>
+    </k-card>
+
+    <!-- Tarjeta -->
+    <k-card padding="lg" radius="xl" customClass="bg-white/[0.02] border-white/5">
+      <div class="flex flex-col gap-4">
+        <div
+          class="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500"
+        >
+          <span class="material-symbols-rounded text-3xl">credit_card</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-black opacity-30 uppercase tracking-[3px]">Tarjeta</p>
+          <p class="text-3xl font-black italic mt-1 text-white">
+            S/ {{ stats().card | number: '1.2-2' }}
+          </p>
+        </div>
+      </div>
+    </k-card>
+
+    <!-- Anulados -->
+    <k-card padding="lg" radius="xl" customClass="bg-red-500/[0.02] border-red-500/10">
+      <div class="flex flex-col gap-4">
+        <div
+          class="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500"
+        >
+          <span class="material-symbols-rounded text-3xl">cancel</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-black opacity-30 uppercase tracking-[3px] text-red-500">
+            Anulados
+          </p>
+          <p class="text-3xl font-black italic mt-1 text-white opacity-40">
+            S/ {{ stats().cancelled | number: '1.2-2' }}
+          </p>
+        </div>
+      </div>
+    </k-card>
+  </div>
+
+  <!-- Gran Total -->
+  <k-card
+    padding="none"
+    radius="xl"
+    customClass="bg-gradient-to-br from-k-green/20 to-transparent border-k-green/20 overflow-hidden"
+  >
+    <div class="p-10 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="flex items-center gap-6">
+        <div
+          class="w-20 h-20 rounded-[32px] bg-k-green flex items-center justify-center text-white shadow-2xl shadow-k-green/20"
+        >
+          <span class="material-symbols-rounded text-5xl">account_balance_wallet</span>
+        </div>
+        <div>
+          <h2 class="text-[11px] font-black text-k-green uppercase tracking-[5px] mb-2">
+            Total en Bóveda
+          </h2>
+          <p class="text-5xl font-black italic leading-none tracking-tighter">
+            S/ {{ stats().todaySales | number: '1.2-2' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <div
+          class="px-8 py-4 bg-white/5 border border-white/5 rounded-3xl flex flex-col items-center"
+        >
+          <span class="text-[10px] font-black opacity-30 uppercase tracking-widest"
+            >Órdenes Pagadas</span
+          >
+          <span class="text-2xl font-black italic text-k-green">{{
+            stats().todaySales > 0 ? 'CONFIRMADO' : 'PENDIENTE'
+          }}</span>
+        </div>
+      </div>
+    </div>
+  </k-card>
+
+  <!-- Estructura del Reporte para Impresión -->
+  <k-report-template title="Reporte de Cierre de Caja">
+    <k-report-finance-summary [stats]="stats()" title="Resumen de Caja (Turno Actual)"></k-report-finance-summary>
+    <k-report-transactions-table [orders]="shiftOrders()" title="Detalle de Operaciones"></k-report-transactions-table>
+  </k-report-template>
+
+  <!-- Detalle de Boletas / Tickets -->
+  <div class="flex flex-col gap-6 mt-4">
+    <div class="flex items-center justify-between px-2">
+      <span class="text-[10px] font-black opacity-30 uppercase tracking-[4px]"
+        >Detalle de Operaciones</span
+      >
+      <span class="text-[10px] font-black opacity-30 uppercase tracking-[4px]"
+        >{{ shiftOrders().length }} Transacciones</span
+      >
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      @for (o of shiftOrders(); track o.id) {
+        <div
+          class="bg-white/[0.01] border border-white/5 rounded-[24px] p-5 px-8 flex items-center justify-between group hover:bg-white/[0.03] transition-all"
+        >
+          <div class="flex items-center gap-6">
+            <div
+              class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/20 group-hover:text-k-green transition-colors"
+            >
+              <span class="material-symbols-rounded">receipt_long</span>
+            </div>
+            <div class="flex flex-col">
+              <strong class="text-sm font-black tracking-tight uppercase"
+                >#{{ o.id.slice(-6).toUpperCase() }}</strong
+              >
+              <span class="text-[9px] font-black opacity-20 uppercase tracking-widest"
+                >{{ formatTime(o.date) }} •
+                {{ o.tableId === 'delivery' ? 'PARA LLEVAR' : 'MESA ' + o.tableId }}</span
+              >
+            </div>
+          </div>
+
+          <div class="flex items-center gap-10">
+            <div class="hidden md:flex flex-col items-end">
+              <span class="text-[9px] font-black opacity-20 uppercase tracking-widest">Método</span>
+              <span class="text-[10px] font-black text-k-green uppercase italic">{{
+                o.paymentMethod
+              }}</span>
+            </div>
+            <div class="flex flex-col items-end min-w-[80px]">
+              <span class="text-[9px] font-black opacity-20 uppercase tracking-widest">Monto</span>
+              <span class="text-base font-black italic tracking-tighter"
+                >S/ {{ o.totalAmount | number: '1.2-2' }}</span
+              >
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div
+          class="py-20 text-center opacity-10 border border-dashed border-white/5 rounded-[32px]"
+        >
+          <span class="material-symbols-rounded text-5xl mb-4">history</span>
+          <p class="text-[10px] font-black uppercase tracking-[3px]">
+            No hay boletas emitidas en este turno
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<div class="p-8 bg-[#0d0d0d] text-white rounded-[32px] border border-white/5 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
+  <k-page-header 
+    [title]="isEditing ? 'Editar Producto' : 'Nuevo Producto'" 
+    subtitle="Catálogo Kimsa Web"
+    [icon]="isEditing ? 'edit_note' : 'add_circle'"
+    class="mb-8"
+  ></k-page-header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Left Column: Info -->
+    <div class="flex flex-col gap-6">
+      <div class="relative group">
+        <div class="w-full h-48 rounded-2xl bg-white/5 border border-white/5 overflow-hidden flex items-center justify-center">
+          @if (productData.imageUrl) {
+            <img [src]="productData.imageUrl" class="w-full h-full object-cover transition-transform group-hover:scale-110" />
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <k-button variant="glass" size="sm" (kClick)="fileInput.click()">Cambiar Imagen</k-button>
+            </div>
+          } @else {
+            <div class="flex flex-col items-center gap-3 opacity-20">
+              <span class="material-symbols-rounded text-5xl">image</span>
+              <k-button variant="glass" size="sm" (kClick)="fileInput.click()" [loading]="isUploadingImage()">Subir Foto</k-button>
+            </div>
+          }
+        </div>
+        <input #fileInput type="file" class="hidden" (change)="uploadImage($event)" accept="image/*" />
+      </div>
+
+      <k-input label="Nombre del Platillo" [(value)]="productData.name" icon="restaurant"></k-input>
+      <k-input label="Descripción Corta" [(value)]="productData.description" icon="description" placeholder="Ej. Con salsa de la casa..."></k-input>
+      
+      <div class="flex flex-col gap-2">
+        <label class="text-[10px] font-black opacity-30 uppercase tracking-[2px] ml-1">Categoría</label>
+        <div class="bg-white/5 border border-white/5 rounded-2xl px-5 py-4 flex items-center">
+          <span class="material-symbols-rounded text-white/20 mr-3">category</span>
+          <select [(ngModel)]="productData.categoryId" class="bg-transparent border-none outline-none w-full text-sm font-bold text-white appearance-none cursor-pointer">
+            @for (cat of categories(); track cat.id) {
+              <option [value]="cat.id" class="bg-[#0d0d0d]">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Prices & Variations -->
+    <div class="flex flex-col gap-6">
+      <div class="bg-white/[0.02] border border-white/5 p-6 rounded-[24px]">
+        <div class="flex items-center justify-between mb-6">
+          <span class="text-[10px] font-black uppercase tracking-widest text-k-green">Variaciones / Precios</span>
+          <k-button variant="glass" size="sm" customClass="!h-8 !text-[10px]" (kClick)="addVariation()">+ Añadir</k-button>
+        </div>
+
+        @if (productData.variations.length === 0) {
+          <k-input label="Precio Base" type="number" [(value)]="productData.price" icon="payments" placeholder="0.00"></k-input>
+          <p class="text-[9px] opacity-30 mt-4 uppercase font-black tracking-widest text-center">No hay variaciones registradas</p>
+        } @else {
+          <div class="flex flex-col gap-3 max-h-48 overflow-y-auto no-scrollbar pr-2">
+            @for (v of productData.variations; track $index; let i = $index) {
+              <div class="flex items-center gap-3 bg-black/20 p-3 rounded-xl border border-white/5 group">
+                <span class="flex-1 text-xs font-bold">{{ v.name }}</span>
+                <span class="text-xs font-black text-k-green">S/ {{ v.price | number:'1.2-2' }}</span>
+                <k-button variant="danger" size="sm" customClass="!p-0 w-6 h-6 opacity-0 group-hover:opacity-100" (kClick)="removeVariation(i)">
+                  <span class="material-symbols-rounded text-sm">close</span>
+                </k-button>
+              </div>
+            }
+          </div>
+          <div class="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+            <span class="text-[10px] font-black uppercase opacity-30">Precio desde</span>
+            <span class="text-xl font-black text-k-green italic">S/ {{ productData.price | number:'1.2-2' }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="flex items-center justify-between bg-white/[0.02] border border-white/5 p-5 rounded-2xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-rounded" [class.text-k-green]="productData.isAvailable">check_circle</span>
+          <span class="text-[10px] font-black uppercase tracking-widest">Disponible en Menú</span>
+        </div>
+        <button [class]="'w-12 h-7 rounded-full p-1.5 transition-all duration-500 ' + (productData.isAvailable ? 'bg-k-green' : 'bg-white/10')" (click)="productData.isAvailable = !productData.isAvailable">
+          <div [class]="'w-4 h-4 bg-white rounded-full transition-all duration-500 ' + (productData.isAvailable ? 'translate-x-5' : 'translate-x-0')"></div>
+        </button>
+      </div>
+
+      @if (errorMessage()) {
+        <k-badge variant="danger" customClass="w-full !justify-center py-4">{{ errorMessage() }}</k-badge>
+      }
+    </div>
+  </div>
+
+  <footer class="flex justify-end gap-4 mt-10 pt-8 border-t border-white/5">
+    <k-button variant="ghost" (kClick)="dialogRef.close()">Cancelar</k-button>
+    <k-button size="lg" customClass="!px-12" (kClick)="onSave()" [loading]="loading()">Guardar Producto</k-button>
+  </footer>
+</div>
+
+<!-- Modal Variación -->
+@if (showAddVariationModal()) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade">
+    <k-card padding="lg" radius="xl" customClass="w-full max-w-sm border border-white/10">
+      <h3 class="text-lg font-black mb-6 uppercase">Añadir Variante</h3>
+      <div class="flex flex-col gap-4">
+        <k-input label="Nombre (ej. Grande, Jarra)" [(value)]="newVarName" icon="edit"></k-input>
+        <k-input label="Precio" type="number" [(value)]="newVarPrice" icon="payments"></k-input>
+        @if (variationError) { <p class="text-[9px] font-black text-k-red uppercase text-center">{{ variationError }}</p> }
+      </div>
+      <footer class="flex justify-end gap-3 mt-8">
+        <k-button variant="ghost" size="sm" (kClick)="showAddVariationModal.set(false)">Cancelar</k-button>
+        <k-button size="sm" (kClick)="confirmAddVariation()">Añadir</k-button>
+      </footer>
+    </k-card>
+  </div>
+}

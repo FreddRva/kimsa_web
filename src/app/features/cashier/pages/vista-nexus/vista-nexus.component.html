@@ -1,0 +1,27 @@
+<div class="grid grid-cols-12 gap-8 h-full min-h-0">
+  
+  <!-- Columna Izquierda: Lista de Comandas (Smart Widget) -->
+  <nexus-orders-list 
+    class="col-span-5 h-full min-h-0"
+    [orders]="filteredOrders()"
+    [selectedId]="store.selectedOrderId()"
+    [currentFilter]="store.filter()"
+    (select)="store.selectOrder($event)"
+    (filterChange)="store.setFilter($event)">
+  </nexus-orders-list>
+
+  <!-- Columna Derecha: Detalle y Pago (Smart Widget) -->
+  <nexus-order-detail
+    class="col-span-7 h-full min-h-0"
+    [order]="store.selectedOrder()"
+    [selectedMethod]="store.selectedMethod()"
+    [selectedDocumentType]="store.selectedDocumentType()"
+    [customerDocument]="store.customerDocument()"
+    (methodChange)="store.setPaymentMethod($event)"
+    (documentTypeChange)="store.setDocumentType($event)"
+    (customerDocumentChange)="store.setCustomerDocument($event)"
+    (cancelOrder)="onCancelOrder($event)"
+    (confirmPayment)="onConfirmPayment()">
+  </nexus-order-detail>
+
+</div>

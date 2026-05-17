@@ -1,0 +1,63 @@
+<k-card 
+  variant="luxury" 
+  padding="none" 
+  radius="xl" 
+  customClass="overflow-hidden border-white/5"
+>
+  <!-- Cabecera con Imagen -->
+  <div class="relative h-48 w-full overflow-hidden">
+    @if (data.product.imageUrl) {
+      <img
+        [src]="data.product.imageUrl"
+        [alt]="data.product.name"
+        class="w-full h-full object-contain bg-black/20"
+      />
+    } @else {
+      <div class="w-full h-full bg-gradient-to-br from-k-green/10 to-transparent flex items-center justify-center">
+        <span class="material-symbols-rounded text-7xl opacity-10">restaurant</span>
+      </div>
+    }
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
+
+    <!-- Botón Cerrar -->
+    <button
+      (click)="onClose()"
+      class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white/40 hover:text-white transition-all active:scale-90"
+    >
+      <span class="material-symbols-rounded text-xl">close</span>
+    </button>
+  </div>
+
+  <!-- Contenido Principal -->
+  <div class="p-6 pt-0">
+    <div class="mb-4">
+      <h2 class="text-2xl font-black text-white uppercase italic tracking-tighter leading-tight mb-1">
+        {{ data.product.name }}
+      </h2>
+      <div class="flex items-center gap-2">
+        <span class="text-k-green font-black italic text-lg">S/ {{ data.product.price | number: '1.2-2' }}</span>
+        <div class="h-1 w-1 rounded-full bg-white/20"></div>
+        <span class="text-[9px] font-bold text-white/30 uppercase tracking-widest">{{ data.product.categoryName || 'General' }}</span>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <k-card variant="glass" padding="sm" radius="md" customClass="mb-6 border-white/5">
+      <p class="text-[11px] font-medium text-white/60 leading-relaxed tracking-wide">
+        {{ data.product.description || 'Este exquisito plato está preparado con los estándares más altos de calidad de Kimsa.' }}
+      </p>
+    </k-card>
+
+    <!-- Botón de Acción -->
+    <k-button 
+      variant="primary" 
+      customClass="w-full !h-14 !rounded-2xl"
+      (kClick)="onAdd()"
+    >
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-rounded">add_shopping_cart</span>
+        AÑADIR AL PEDIDO
+      </div>
+    </k-button>
+  </div>
+</k-card>

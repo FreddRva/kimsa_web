@@ -3,12 +3,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "baseUrl": "./",
-    "paths": {
-      "@shared": ["src/app/shared/index.ts"],
-      "@shared/*": ["src/app/shared/*"],
-      "@services/*": ["src/app/services/*"],
-      "@models/*": ["src/app/shared/models/*"]
-    },
+
     "types": []
   },
   "include": [

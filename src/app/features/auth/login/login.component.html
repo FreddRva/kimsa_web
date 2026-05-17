@@ -1,106 +1,85 @@
-<div class="relative min-h-screen overflow-hidden bg-black">
-  <div class="absolute inset-0">
-    <img src="assets/images/Fondo.png" alt="" class="h-full w-full object-cover" />
-  </div>
-
-  <!-- Flutter: negro + rojo suave -->
-  <div
-    class="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/60 via-[#E02F2F]/10 to-black/40"
-  ></div>
-
-  <div class="pointer-events-none absolute inset-0 overflow-hidden">
-    @for (p of particles; track $index) {
-      <div
-        class="absolute rounded-full bg-white/[0.15]"
-        [style]="{
-          left: p.x + '%',
-          top: p.y + '%',
-          width: p.s + 'px',
-          height: p.s + 'px',
-          animation: 'particle-float ' + p.duration + 's linear infinite',
-          animationDelay: p.delay + 's',
-        }"
-      ></div>
-    }
-  </div>
-
-  <div class="relative z-10 flex min-h-screen items-center justify-center px-6 py-10">
+<div
+  class="relative flex h-screen w-full items-center justify-center overflow-hidden bg-[#020202] font-outfit text-white"
+>
+  <!-- BACKGROUND ANIMATION -->
+  <div class="absolute inset-0 z-0">
     <div
-      class="w-full max-w-[420px] rounded-[40px] border border-white/[0.12] bg-white/[0.03] p-10 shadow-[0_15px_30px_rgba(0,0,0,0.4)] backdrop-blur-[40px]"
-    >
-      <form class="flex flex-col gap-6" (submit)="onLogin($event)">
+      class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(22,163,74,0.1),transparent_70%)]"
+    ></div>
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(220,38,38,0.05),transparent_50%)]"
+    ></div>
+    <img
+      src="assets/images/Fondo.png"
+      class="h-full w-full object-cover opacity-20 mix-blend-overlay"
+    />
+  </div>
+
+  <!-- LOGIN CARD -->
+  <div class="relative z-10 w-full max-w-[450px] px-6">
+    <div class="animate-in fade-in zoom-in duration-700">
+      <!-- LOGO AREA -->
+      <div class="mb-10 flex flex-col items-center gap-4">
         <div
-          class="flex items-center rounded-[20px] border border-white/[0.05] bg-black/20 px-2 focus-within:border-white/10"
-          [class.ring-2]="loginError"
-          [class.ring-red-500/40]="loginError"
+          class="flex h-24 w-24 items-center justify-center rounded-[32px] bg-white/[0.03] p-4 border border-white/10 shadow-2xl backdrop-blur-md"
         >
-          <mat-icon class="mx-3 shrink-0 text-[20px] !text-[#E02F2F]/80">alternate_email</mat-icon>
-          <input
-            type="email"
-            name="email"
-            [(ngModel)]="email"
-            autocomplete="email"
-            placeholder="CORREO ELECTRÓNICO"
-            class="min-h-[56px] w-full bg-transparent py-4 pr-4 text-base tracking-wide text-white outline-none placeholder:text-[10px] placeholder:font-bold placeholder:tracking-[0.2em] placeholder:text-white/20"
-          />
+          <img src="assets/images/LogoOriginal.png" class="h-full w-full object-contain" />
+        </div>
+        <div class="text-center">
+          <h1 class="text-3xl font-black italic tracking-tighter text-white">
+            KIMSA <span class="text-k-green">RESTAURANT</span>
+          </h1>
+          <p class="text-[10px] font-black uppercase tracking-[5px] text-white/30">
+            Gestión Inteligente
+          </p>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div
+        class="flex flex-col gap-6 rounded-[40px] border border-white/5 bg-white/[0.02] p-10 backdrop-blur-3xl shadow-2xl"
+      >
+        <div class="mb-2">
+          <h2 class="text-xl font-black uppercase italic">Bienvenido</h2>
+          <p class="text-xs font-bold text-white/20">Ingresa tus credenciales para continuar</p>
         </div>
 
-        <div
-          class="flex items-center rounded-[20px] border border-white/[0.05] bg-black/20 px-2 focus-within:border-white/10"
-        >
-          <mat-icon class="mx-3 shrink-0 text-[20px] !text-[#E02F2F]/80">lock_outline</mat-icon>
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            name="password"
-            [(ngModel)]="password"
-            autocomplete="current-password"
-            placeholder="CONTRASEÑA"
-            class="min-h-[56px] w-full flex-1 bg-transparent py-4 pr-2 text-base tracking-wide text-white outline-none placeholder:text-[10px] placeholder:font-bold placeholder:tracking-[0.2em] placeholder:text-white/20"
-          />
-          <button
-            type="button"
-            class="mr-2 text-white/20 transition hover:text-white/50"
-            (click)="showPassword = !showPassword"
-          >
-            <mat-icon class="text-[20px]">{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
-          </button>
-        </div>
+        <k-input
+          label="Correo Electrónico"
+          [(value)]="email"
+          icon="alternate_email"
+          placeholder="nombre@kimsa.com"
+          (keyup.enter)="onLogin()"
+        ></k-input>
 
-        @if (loginError) {
-          <div
-            class="flex items-center gap-3 rounded-2xl border border-red-500/30 bg-red-600/80 px-4 py-3 text-sm font-semibold text-white"
+        <k-input
+          label="Contraseña"
+          type="password"
+          [(value)]="password"
+          icon="lock"
+          placeholder="••••••••"
+          (keyup.enter)="onLogin()"
+        ></k-input>
+
+        @if (loginError()) {
+          <k-badge
+            variant="danger"
+            customClass="w-full !justify-center py-4 animate-in slide-in-from-top-2"
           >
-            <mat-icon class="shrink-0">error_outline</mat-icon>
-            <span>{{ loginError }}</span>
-          </div>
+            {{ loginError() }}
+          </k-badge>
         }
 
-        <button
-          type="submit"
-          [disabled]="isLoading()"
-          class="relative flex h-16 w-full items-center justify-center overflow-hidden rounded-[20px] bg-gradient-to-br from-[#E02F2F] to-[#6E0000] text-sm font-black tracking-[0.2em] text-white shadow-[0_10px_20px_rgba(224,47,47,0.4)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70"
+        <k-button
+          variant="luxury"
+          size="lg"
+          customClass="w-full !h-16 !text-lg !font-black !italic !tracking-widest mt-4"
+          (kClick)="onLogin()"
+          [loading]="isLoading()"
         >
-          @if (isLoading()) {
-            <svg class="h-6 w-6 animate-spin text-white" viewBox="0 0 24 24" fill="none">
-              <circle
-                class="opacity-20"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-90"
-                fill="currentColor"
-                d="M12 2a10 10 0 00-10 10h4a6 6 0 016-6V2z"
-              ></path>
-            </svg>
-          } @else {
-            ACCEDER AL SISTEMA
-          }
-        </button>
-      </form>
+          INICIAR SESIÓN
+        </k-button>
+      </div>
     </div>
   </div>
 </div>

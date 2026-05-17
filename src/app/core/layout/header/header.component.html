@@ -1,201 +1,98 @@
-@if (shell === 'admin') {
-  <header class="relative z-40 shrink-0 text-white">
-    <div class="px-4 pt-2.5 pb-2.5 md:px-8">
-      <div
-        class="flex min-h-[65px] items-center gap-2 rounded-[20px] border border-white/[0.06] bg-black/30 px-3 py-2 shadow-[0_6px_15px_rgba(0,0,0,0.2)] backdrop-blur-[15px] md:gap-4 md:px-4"
-      >
-        <div class="flex min-w-0 flex-1 flex-col justify-center">
-          <span class="mb-0.5 text-[8px] font-black uppercase tracking-[2px] text-k-green">CORE PANEL</span>
-          <h2 class="truncate text-base font-black uppercase tracking-wide md:text-[18px]">{{ title }}</h2>
-        </div>
-
-        <div class="mx-1 hidden min-w-0 max-w-[220px] flex-1 justify-center lg:flex">
-          <div
-            class="inline-flex max-w-full items-center gap-2 rounded-full border border-k-green/20 bg-k-green/10 px-2.5 py-1.5"
-          >
-            <span
-              class="h-1.5 w-1.5 shrink-0 rounded-full bg-k-green shadow-[0_0_4px_rgba(22,163,74,0.45)]"
-            ></span>
-            <span class="truncate text-[9px] font-black uppercase tracking-wide text-k-green">Sincronizado</span>
-            <span class="material-symbols-rounded shrink-0 text-sm text-k-green">cloud_done</span>
-          </div>
-        </div>
-
-        <div class="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            class="relative flex h-[38px] w-[38px] items-center justify-center rounded-xl bg-white/[0.03] text-white/40 transition hover:bg-white/[0.06]"
-            aria-label="Notificaciones"
-            (click)="notificationsClick.emit()"
-          >
-            <span class="material-symbols-rounded text-[20px]">notifications_none</span>
-            @if (unreadCount > 0) {
-              <div class="absolute -top-1 -right-1 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[8px] font-bold text-white shadow-[0_2px_4px_rgba(220,38,38,0.5)]">
-                {{ unreadCount }}
-              </div>
-            }
-          </button>
-
-          <div class="relative">
-            <button
-              type="button"
-              class="flex items-center gap-2 rounded-xl bg-white/[0.03] py-1.5 pl-1.5 pr-2 transition hover:bg-white/[0.06]"
-              (click)="menuOpen.set(!menuOpen())"
-            >
-              <div
-                class="flex h-7 w-7 items-center justify-center rounded-full bg-k-green text-[11px] font-bold text-white"
-              >
-                {{ userName.charAt(0).toUpperCase() }}
-              </div>
-              <span
-                class="material-symbols-rounded text-lg text-white/30"
-                [class.rotate-180]="menuOpen()"
-              >expand_more</span>
-            </button>
-
-            @if (menuOpen()) {
-              <div
-                class="animate-fade absolute right-0 top-[52px] z-[100] w-[220px] rounded-2xl border border-white/[0.08] bg-[#151515] p-2 shadow-[0_30px_60px_rgba(0,0,0,0.8)]"
-              >
-                <button
-                  type="button"
-                  class="group flex w-full items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-white/[0.04]"
-                  (click)="logout.emit(); menuOpen.set(false)"
-                >
-                  <span class="material-symbols-rounded text-lg text-k-red">logout</span>
-                  <span class="text-sm font-bold text-k-red">Cerrar Sesión</span>
-                </button>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-} @else {
+<div class="fixed top-4 left-0 right-0 z-[100] flex justify-end pr-6">
+  <!-- Header estilo Cápsula Premium -->
   <header
-    class="z-40 flex h-[100px] items-center justify-between border-b px-10 backdrop-blur-xl"
-    [ngClass]="
-      appearance === 'light'
-        ? 'border-black/[0.06] bg-white/60 text-k-ink'
-        : 'border-white/5 bg-black/50 text-white'
-    "
+    class="relative h-16 w-full max-w-[calc(100%-280px)] rounded-full border border-white/10 bg-[#0a0a0a]/80 shadow-2xl backdrop-blur-2xl transition-all duration-500"
   >
-    <div class="flex flex-col">
-      <span class="mb-1 text-[9px] font-black uppercase tracking-[3px] text-k-green">CORE PANEL</span>
-      <h2 class="text-2xl font-black uppercase tracking-wider text-inherit">{{ title }}</h2>
-    </div>
-
-    <div class="flex flex-1 justify-center">
-      <ng-content select="[center]"></ng-content>
-    </div>
-
-    <div class="flex items-center gap-6">
-      <div
-        class="flex items-center gap-3 rounded-2xl border px-5 py-2.5 text-[10px] font-black uppercase tracking-widest"
-        [ngClass]="
-          appearance === 'light'
-            ? 'border-black/[0.06] bg-black/[0.03] text-k-ink-muted'
-            : 'border-white/10 bg-white/5 text-k-text-muted'
-        "
-      >
-        <div class="h-2 w-2 animate-pulse rounded-full bg-k-green shadow-[0_0_10px_rgba(22,163,74,0.5)]"></div>
-        <span>Live Sync</span>
+    <div class="flex h-full items-center justify-between px-8">
+      <!-- LADO IZQUIERDO: Títulos -->
+      <div class="flex flex-col animate-in slide-in-from-left duration-700">
+        <span class="text-[9px] font-black uppercase tracking-[2px] text-k-green mb-0.5"
+          >Core Panel</span
+        >
+        <h1 class="text-lg font-black uppercase tracking-tight text-white leading-none">
+          {{ title }}
+        </h1>
       </div>
 
-      <button
-        type="button"
-        class="group relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl transition-all duration-300"
-        [ngClass]="
-          appearance === 'light'
-            ? 'border border-black/[0.08] bg-black/[0.03] hover:bg-black/[0.06]'
-            : 'glass-morphism hover:bg-white/10'
-        "
-      >
-        <span
-          class="material-symbols-rounded text-[22px] transition-colors"
-          [ngClass]="
-            appearance === 'light'
-              ? 'text-k-ink-muted group-hover:text-k-ink'
-              : 'text-white/40 group-hover:text-white'
-          "
-        >notifications</span>
-        <div
-          class="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-k-red"
-          [ngClass]="appearance === 'light' ? 'border-2 border-white' : 'border-2 border-black'"
-        ></div>
-      </button>
+      <!-- CENTRO: Espacio para navegación dinámica (Caja, etc.) -->
+      <div class="flex-1 flex justify-center px-4">
+        <ng-content select="[center]"></ng-content>
+      </div>
 
-      <div class="relative">
-        <button
-          type="button"
-          class="flex h-[56px] cursor-pointer items-center gap-3 rounded-2xl px-2 py-2 pr-5 text-inherit transition-all duration-300"
-          [ngClass]="
-            appearance === 'light'
-              ? 'border border-black/[0.08] bg-black/[0.03] hover:border-black/15'
-              : 'glass-morphism hover:border-white/20'
-          "
-          (click)="menuOpen.set(!menuOpen())"
+      <!-- LADO DERECHO: Acciones y Perfil -->
+      <div class="flex items-center gap-4">
+        <!-- Estado de Sincronización -->
+        <div
+          class="flex items-center gap-2 rounded-full border border-k-green/20 bg-k-green/5 px-4 py-1.5 transition-all"
         >
           <div
-            class="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-k-green to-k-green-dark font-black text-white shadow-lg"
+            [class]="'h-1.5 w-1.5 rounded-full ' + (isOnline() ? 'bg-k-green animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-k-red shadow-[0_0_8px_rgba(224,47,47,0.5)]')"
+          ></div>
+          <span class="text-[9px] font-black uppercase tracking-widest text-k-green">
+            {{ isOnline() ? 'Sincronizado' : 'Offline' }}
+          </span>
+          <span class="material-symbols-rounded text-sm text-k-green">cloud_done</span>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="notifications-container relative">
+          <button
+            (click)="toggleNotifications()"
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-white/40 hover:bg-white/10 hover:text-white transition-all relative"
           >
-            {{ userName.charAt(0).toUpperCase() }}
-          </div>
-
-          <div class="flex flex-col text-left">
-            <span class="text-[14px] font-extrabold leading-none tracking-tight text-inherit">{{ userName }}</span>
-            <span
-              class="mt-1 text-[9px] font-black uppercase tracking-widest"
-              [ngClass]="appearance === 'light' ? 'text-k-ink-faint' : 'text-k-text-dim'"
-            >{{ userRole }}</span>
-          </div>
-
-          <span
-            class="material-symbols-rounded transition-transform duration-300"
-            [ngClass]="
-              (appearance === 'light' ? 'text-k-ink-faint ' : 'text-white/20 ') + (menuOpen() ? 'rotate-180' : '')
-            "
-          >expand_more</span>
-        </button>
-
-        @if (menuOpen()) {
-          <div
-            class="animate-fade absolute right-0 top-[70px] z-[100] w-[240px] rounded-[24px] border p-3 shadow-[0_30px_60px_rgba(0,0,0,0.8)]"
-            [ngClass]="appearance === 'light' ? 'border-black/10 bg-white' : 'border-white/10 bg-[#0A0A0A]'"
-          >
-            <div class="mb-2 border-b p-4" [ngClass]="appearance === 'light' ? 'border-black/5' : 'border-white/5'">
-              <p
-                class="text-[10px] font-black uppercase tracking-[2px]"
-                [ngClass]="appearance === 'light' ? 'text-k-ink-faint' : 'text-k-text-dim'"
-              >
-                Account
-              </p>
-              <p class="mt-1 text-xs font-bold text-inherit">{{ userName }}</p>
-            </div>
-
-            <button
-              type="button"
-              class="group flex h-14 w-full items-center gap-4 rounded-2xl px-4 transition-all duration-300 hover:bg-k-red/10"
-              (click)="logout.emit()"
-            >
+            <span class="material-symbols-rounded text-xl">notifications</span>
+            @if (unreadCount > 0) {
               <div
-                class="flex h-10 w-10 items-center justify-center rounded-xl bg-k-red/10 text-k-red transition-all group-hover:bg-k-red group-hover:text-white"
-              >
-                <span class="material-symbols-rounded text-[20px]">logout</span>
+                class="absolute top-2 right-2 w-2 h-2 bg-k-red rounded-full shadow-[0_0_5px_rgba(224,47,47,1)]"
+              ></div>
+            }
+          </button>
+        </div>
+
+        <!-- Área de Perfil -->
+        <div class="user-menu-container relative">
+          <button
+            (click)="toggleMenu()"
+            class="flex items-center gap-3 rounded-xl bg-white/5 p-1 pr-3 hover:bg-white/10 transition-all border border-white/5"
+          >
+            <div
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-k-green text-[12px] font-black text-black uppercase"
+            >
+              {{ userName.substring(0, 1) }}
+            </div>
+            <span class="material-symbols-rounded text-lg text-white/40">expand_more</span>
+          </button>
+
+          <!-- Menú Perfil -->
+          @if (isMenuOpen()) {
+            <div
+              class="absolute right-0 top-12 w-52 overflow-hidden rounded-2xl border border-white/5 bg-[#0a0a0a] p-1.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300 z-[110]"
+            >
+              <div class="mb-1 border-b border-white/5 p-3">
+                <p class="text-[8px] font-black uppercase tracking-widest text-white/30">
+                  Usuario Activo
+                </p>
+                <p class="mt-0.5 truncate text-[11px] font-bold text-white">{{ userName }}</p>
               </div>
-              <span
-                class="text-sm font-bold transition-colors"
-                [ngClass]="
-                  appearance === 'light'
-                    ? 'text-k-ink-muted group-hover:text-k-ink'
-                    : 'text-white/60 group-hover:text-white'
-                "
-              >Cerrar Sesión</span>
-            </button>
-          </div>
-        }
+
+              <button
+                (click)="onLogout()"
+                class="flex w-full items-center gap-2.5 rounded-xl p-3 text-k-red transition-colors hover:bg-k-red/10"
+              >
+                <span class="material-symbols-rounded text-base">logout</span>
+                <span class="text-[9px] font-black uppercase tracking-widest">Cerrar Sesión</span>
+              </button>
+            </div>
+          }
+        </div>
       </div>
     </div>
   </header>
+</div>
+
+<!-- Panel de Notificaciones Oficial -->
+@if (isNotificationsOpen()) {
+  <k-notification-center (close)="toggleNotifications()"></k-notification-center>
 }
+
+<div class="h-20"></div>

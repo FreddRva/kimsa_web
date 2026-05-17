@@ -1,131 +1,52 @@
-@if (appearance === 'dark') {
-  <aside
-    class="relative z-50 flex h-full w-[260px] shrink-0 flex-col border-r border-white/[0.05] bg-[#0a0a0a]/80 text-white shadow-[5px_0_30px_rgba(0,0,0,0.3)] backdrop-blur-xl"
-  >
-    <div class="flex h-[90px] items-center gap-4 px-6">
-      <div
-        class="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-k-green to-[#004d1a] p-2.5 shadow-[0_4px_15px_rgba(22,163,74,0.3)]"
-      >
-        <span class="material-symbols-rounded text-[22px] text-white">admin_panel_settings</span>
-      </div>
-      <div class="min-w-0">
-        <h1 class="text-[20px] font-black leading-none tracking-[4px]">KIMSA</h1>
-        <p class="mt-0.5 text-[8px] font-black uppercase tracking-[2px] text-white/30">
-          {{ subtitle }}
-        </p>
-      </div>
+<aside
+  [class]="'relative z-50 flex h-full shrink-0 flex-col border-r transition-all duration-300 backdrop-blur-xl ' + (appearance === 'dark' ? 'w-[260px] border-white/[0.05] bg-[#0a0a0a]/80 text-white shadow-[5px_0_30px_rgba(0,0,0,0.3)]' : 'w-[280px] border-black/[0.06] bg-white/90 text-k-ink shadow-[5px_0_30px_rgba(0,0,0,0.05)]')"
+>
+  <!-- Logo Section -->
+  <div class="flex items-center gap-4 px-6" [class.h-[90px]]="appearance === 'dark'" [class.h-[120px]]="appearance === 'light'">
+    <div class="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-k-green to-[#004d1a] shadow-[0_4px_15px_rgba(22,163,74,0.3)]">
+      <span class="material-symbols-rounded text-white text-[22px]">admin_panel_settings</span>
     </div>
+    <div class="min-w-0">
+      <h1 class="font-black leading-none tracking-[4px] text-[20px]">KIMSA</h1>
+      <p [class]="'mt-1 text-[8px] font-black uppercase tracking-[2px] ' + (appearance === 'dark' ? 'text-white/30' : 'text-k-ink-faint')">{{ subtitle }}</p>
+    </div>
+  </div>
 
-    <nav class="no-scrollbar flex flex-1 flex-col overflow-y-auto pb-10">
-      @for (item of items; track item.id; let i = $index) {
-        @if (item.section && (i === 0 || items[i - 1].section !== item.section)) {
-          <div
-            class="pl-7 pr-6 pb-2 text-[9px] font-black uppercase tracking-[2px] text-white/20"
-            [class.pt-2]="i === 0"
-            [class.pt-4]="i !== 0"
-          >
-            {{ item.section }}
-          </div>
-        }
-
-        <div class="px-4 py-0.5">
-          <button
-            type="button"
-            class="relative w-full rounded-[14px] text-left transition-all duration-300"
-            [ngClass]="
-              selectedTab === item.id
-                ? 'bg-white/[0.05] shadow-[0_4px_20px_rgba(22,163,74,0.1)]'
-                : 'hover:bg-white/[0.02]'
-            "
-            (click)="tabChange.emit(item.id)"
-          >
-            <div class="flex items-center gap-4 px-4 py-3.5">
-              <div
-                class="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[10px] transition-all duration-300"
-                [ngClass]="
-                  selectedTab === item.id
-                    ? 'bg-k-green text-white shadow-[0_0_10px_rgba(22,163,74,0.4)]'
-                    : 'bg-transparent text-white/40'
-                "
-              >
-                <span class="material-symbols-rounded text-[18px]">{{ item.icon }}</span>
-              </div>
-              <span
-                class="min-w-0 flex-1 text-[13px] font-semibold leading-snug tracking-wide text-white/50"
-                [class.font-extrabold]="selectedTab === item.id"
-                [class.text-white]="selectedTab === item.id"
-              >
-                {{ item.label }}
-              </span>
-              @if (selectedTab === item.id) {
-                <div class="h-1 w-1 shrink-0 rounded-full bg-k-green"></div>
-              }
-            </div>
-          </button>
+  <!-- Navigation -->
+  <nav class="no-scrollbar flex flex-1 flex-col overflow-y-auto pb-10 px-4 gap-1">
+    @for (item of items; track item.id; let i = $index) {
+      @if (item.section && (i === 0 || items[i - 1].section !== item.section)) {
+        <div [class]="'px-3 pb-2 text-[9px] font-black uppercase tracking-[3px] ' + (i === 0 ? 'pt-2' : 'pt-4') + ' ' + (appearance === 'dark' ? 'text-white/20' : 'text-k-ink-faint')">
+          {{ item.section }}
         </div>
       }
-    </nav>
-  </aside>
-} @else {
-  <aside
-    class="flex h-full w-[280px] shrink-0 flex-col border-r border-black/[0.06] bg-white/90 text-k-ink shadow-[5px_0_30px_rgba(0,0,0,0.05)] backdrop-blur-xl z-50"
-  >
-    <div class="flex h-[120px] items-center gap-4 px-8">
-      <div
-        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-k-green to-k-green-dark text-white shadow-[0_10px_20px_-5px_rgba(22,163,74,0.3)]"
+
+      <k-button
+        [variant]="selectedTab === item.id ? (appearance === 'dark' ? 'primary' : 'ghost') : 'ghost'"
+        size="sm"
+        [customClass]="'w-full !justify-start !px-4 !py-3.5 !tracking-wide ' + (selectedTab === item.id && appearance === 'light' ? 'bg-black/[0.04] border-black/5' : '')"
+        (kClick)="tabChange.emit(item.id)"
       >
-        <span class="material-symbols-rounded text-2xl">admin_panel_settings</span>
-      </div>
-      <div>
-        <h1 class="text-xl font-black leading-none tracking-[4px] text-inherit">KIMSA</h1>
-        <p class="mt-1 text-[9px] font-black uppercase tracking-[2px] text-k-ink-faint">{{ subtitle }}</p>
-      </div>
-    </div>
-
-    <nav class="scroll-none flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-6">
-      @for (item of items; track item.id; let i = $index) {
-        @if (item.section && (i === 0 || items[i - 1].section !== item.section)) {
-          <div class="mb-4 ml-4 mt-8 text-[9px] font-black uppercase tracking-[3px] text-k-ink-faint">
-            {{ item.section }}
-          </div>
-        }
-
-        <button
-          type="button"
-          class="group relative flex h-14 w-full items-center gap-4 rounded-[18px] px-5 transition-all duration-300"
-          [ngClass]="
-            selectedTab === item.id
-              ? 'border border-black/[0.06] bg-black/[0.04] text-k-ink'
-              : 'text-k-ink-muted hover:bg-black/[0.03] hover:text-k-ink'
-          "
-          (click)="tabChange.emit(item.id)"
-        >
-          <span
-            class="material-symbols-rounded text-[20px] transition-transform duration-300 group-hover:scale-110"
-            [class.text-k-green]="selectedTab === item.id"
-          >
-            {{ item.icon }}
-          </span>
-          <span class="text-sm font-bold tracking-wide">{{ item.label }}</span>
+        <div class="flex w-full items-center gap-4">
+          <span class="material-symbols-rounded text-[18px]" [class.text-k-green]="selectedTab === item.id && appearance === 'light'">{{ item.icon }}</span>
+          <span class="flex-1 text-left text-[13px] normal-case tracking-normal">{{ item.label }}</span>
           @if (selectedTab === item.id) {
-            <div
-              class="absolute right-5 h-1.5 w-1.5 rounded-full bg-k-green shadow-[0_0_10px_rgba(22,163,74,0.5)]"
-            ></div>
+            <div class="h-1.5 w-1.5 shrink-0 rounded-full bg-k-green shadow-[0_0_10px_rgba(22,163,74,0.5)]"></div>
           }
-        </button>
-      }
-    </nav>
-
-    <div class="border-t border-black/[0.06] p-8">
-      <div class="glass-morphism flex items-center gap-3 rounded-2xl border border-black/[0.06] bg-black/[0.02] p-4">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-k-red/20 text-k-red">
-          <span class="material-symbols-rounded text-lg">verified_user</span>
         </div>
+      </k-button>
+    }
+  </nav>
+
+  @if (appearance === 'light') {
+    <div class="border-t border-black/[0.06] p-8">
+      <div class="flex items-center gap-3 rounded-2xl border border-black/[0.06] bg-black/[0.02] p-4">
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-k-red/20 text-k-red"><span class="material-symbols-rounded text-lg">verified_user</span></div>
         <div>
           <p class="text-[10px] font-black uppercase leading-none tracking-widest text-k-ink-faint">Security</p>
           <p class="mt-1 text-[10px] font-bold text-inherit">V 2.0.1</p>
         </div>
       </div>
     </div>
-  </aside>
-}
+  }
+</aside>

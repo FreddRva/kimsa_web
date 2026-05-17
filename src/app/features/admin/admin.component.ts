@@ -1,89 +1,62 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { KSidebarComponent } from '../../core/layout/sidebar/sidebar.component';
 import { KHeaderComponent } from '../../core/layout/header/header.component';
 import { NotificationCenterComponent } from '../../core/layout/notification-center/notification-center.component';
 import { NavItem } from '../../core/layout/sidebar/sidebar.component';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { Product, Category, Order } from '../../shared/models';
-import { AdminStore } from '../../store/admin.store';
 
-import { DashboardViewComponent } from './views/dashboard-view/dashboard-view.component';
-import { MenuViewComponent } from './views/menu-view/menu-view.component';
-import { CategoryViewComponent } from './views/category-view/category-view.component';
-import { TableViewComponent } from './views/table-view/table-view.component';
-import { SettingsViewComponent } from './views/settings-view/settings-view.component';
-import { StationDistributionViewComponent } from './views/station-distribution-view/station-distribution-view.component';
-import { EmployeeViewComponent } from './views/employee-view/employee-view.component';
+import { VistaDashboardComponent } from './pages/vista-dashboard/vista-dashboard.component';
+import { VistaMenuAdminComponent } from './pages/vista-menu/vista-menu.component';
+import { VistaCategoriaComponent } from './pages/vista-categoria/vista-categoria.component';
+import { VistaMesaAdminComponent } from './pages/vista-mesa/vista-mesa.component';
+import { VistaConfiguracionComponent } from './pages/vista-configuracion/vista-configuracion.component';
+import { VistaDistribucionEstacionesComponent } from './pages/vista-distribucion-estaciones/vista-distribucion-estaciones.component';
+import { VistaEmpleadoComponent } from './pages/vista-empleado/vista-empleado.component';
+import { VistaClienteAdminComponent } from './pages/vista-cliente/vista-cliente.component';
+import { DashboardFacade } from '../../core/application/facades/dashboard.facade';
+import { StaffFacade } from './facades/staff.facade';
+import { SettingsFacade } from './facades/settings.facade';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
   imports: [
-    CommonModule,
     KSidebarComponent,
     KHeaderComponent,
     NotificationCenterComponent,
-    DashboardViewComponent,
-    MenuViewComponent,
-    CategoryViewComponent,
-    TableViewComponent,
-    SettingsViewComponent,
-    StationDistributionViewComponent,
-    EmployeeViewComponent,
+    VistaDashboardComponent,
+    VistaMenuAdminComponent,
+    VistaCategoriaComponent,
+    VistaMesaAdminComponent,
+    VistaConfiguracionComponent,
+    VistaDistribucionEstacionesComponent,
+    VistaEmpleadoComponent,
+    VistaClienteAdminComponent,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css',
 })
 export class AdminComponent {
-  public adminStore = inject(AdminStore);
   private authService = inject(AuthService);
-  private router = inject(Router);
   public notificationService = inject(NotificationService);
-
-  isNotificationCenterOpen = signal(false);
+  private router = inject(Router);
 
   selectedTab = signal(0);
-  products = this.adminStore.products;
-  categories = this.adminStore.categories;
-  tables = this.adminStore.tables;
-  paidOrders = this.adminStore.paidOrders;
-  users = this.adminStore.users;
-  filterText = signal('');
+  isNotificationCenterOpen = signal(false);
   menuOpen = signal(false);
 
   navItems: NavItem[] = [
-    { id: 0, label: 'Overview', section: 'PRINCIPAL', icon: 'dashboard_customize' },
-    { id: 1, label: 'Menú & Productos', section: 'PRINCIPAL', icon: 'restaurant_menu' },
-    { id: 2, label: 'Categorías', section: 'PRINCIPAL', icon: 'collections_bookmark' },
-    { id: 3, label: 'Distribución Estaciones', section: 'PRINCIPAL', icon: 'call_split' },
-    { id: 4, label: 'Gestión de Mesas', section: 'OPERACIONES', icon: 'table_bar' },
-    { id: 5, label: 'Equipo / Personal', section: 'SISTEMA', icon: 'badge' },
-    { id: 6, label: 'Configuración', section: 'SISTEMA', icon: 'tune' },
+    { id: 0, label: 'Overview',                  section: 'PRINCIPAL',   icon: 'dashboard_customize' },
+    { id: 1, label: 'Menú & Productos',           section: 'PRINCIPAL',   icon: 'restaurant_menu' },
+    { id: 2, label: 'Categorías',                 section: 'PRINCIPAL',   icon: 'collections_bookmark' },
+    { id: 3, label: 'Distribución Estaciones',    section: 'PRINCIPAL',   icon: 'call_split' },
+    { id: 7, label: 'Clientes',                   section: 'PRINCIPAL',   icon: 'groups' },
+    { id: 4, label: 'Gestión de Mesas',           section: 'OPERACIONES', icon: 'table_bar' },
+    { id: 5, label: 'Equipo / Personal',          section: 'SISTEMA',     icon: 'badge' },
+    { id: 6, label: 'Configuración',              section: 'SISTEMA',     icon: 'tune' },
   ];
-
-  filteredProducts = computed(() => {
-    const text = this.filterText().toLowerCase();
-    return this.products().filter((p) => !p.isDeleted && p.name.toLowerCase().includes(text));
-  });
-
-  stats = computed(() => {
-    const orders = this.paidOrders();
-    const today = new Date().toDateString();
-    const todayOrders = orders.filter((o) => {
-      const d = o.timestamp?.toDate ? o.timestamp.toDate() : new Date(o.timestamp);
-      return d.toDateString() === today;
-    });
-    const sales = todayOrders.reduce((acc, o) => acc + (o.total || 0), 0);
-    return {
-      todaySales: sales,
-      orderCount: todayOrders.length,
-      avgTicket: todayOrders.length > 0 ? sales / todayOrders.length : 0,
-      activeTables: this.tables().filter((t) => t.status === 'occupied').length,
-    };
-  });
 
   constructor() {
     this.notificationService.listenForNewOrders();
@@ -91,26 +64,15 @@ export class AdminComponent {
   }
 
   getTabTitle(): string {
-    const titles = [
-      'DASHBOARD GENERAL',
-      'GESTOR DE MENÚ',
-      'GESTOR DE CATEGORÍAS',
-      'DISTRIBUCIÓN DE ESTACIONES',
-      'GESTIÓN DE MESAS',
-      'GESTIÓN DE EMPLEADOS',
-      'CONFIGURACIÓN DE SISTEMA',
-    ];
+    const titles: { [key: number]: string } = {
+      0: 'DASHBOARD GENERAL', 1: 'GESTOR DE MENÚ', 2: 'GESTOR DE CATEGORÍAS',
+      3: 'DISTRIBUCIÓN DE ESTACIONES', 4: 'GESTIÓN DE MESAS',
+      5: 'GESTIÓN DE EMPLEADOS', 6: 'CONFIGURACIÓN DE SISTEMA', 7: 'BASE DE CLIENTES'
+    };
     return titles[this.selectedTab()] ?? 'ADMIN';
   }
 
-  onTabChange(id: number) {
-    this.selectedTab.set(id);
-  }
-  userName(): string {
-    return this.authService.currentUserData()?.name || 'Admin';
-  }
-
-  onLogout() {
-    this.authService.logout().subscribe(() => this.router.navigate(['/login']));
-  }
+  onTabChange(id: number) { this.selectedTab.set(id); }
+  userName(): string { return this.authService.currentUserData()?.name || 'Admin'; }
+  onLogout() { this.authService.logout().subscribe(() => this.router.navigate(['/login'])); }
 }

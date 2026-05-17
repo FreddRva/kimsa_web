@@ -1,0 +1,36 @@
+<k-card 
+  variant="luxury" 
+  padding="xl" 
+  radius="xl" 
+  customClass="flex flex-col items-center text-center border-white/5 min-w-[400px]"
+>
+  <div class="w-20 h-20 rounded-[32px] bg-k-green/10 flex items-center justify-center text-k-green mb-6 border border-k-green/10">
+    <span class="material-symbols-rounded text-4xl">tune</span>
+  </div>
+
+  <h2 class="text-xl font-black uppercase tracking-tight italic mb-2">{{ data.product.name }}</h2>
+  <p class="text-xs font-bold text-white/30 uppercase tracking-[3px] mb-10">Selecciona el tamaño o tipo</p>
+
+  <div class="flex flex-col gap-4 w-full">
+    @for (v of data.product.variations; track v.name) {
+      <k-button 
+        variant="glass" 
+        size="lg" 
+        customClass="w-full !h-20 !rounded-3xl !border-white/5 !bg-white/[0.02]" 
+        (kClick)="selectVariation(v)"
+      >
+        <div class="flex items-center justify-between w-full px-4">
+          <div class="flex flex-col items-start">
+            <span class="text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">Variación</span>
+            <span class="text-lg font-black uppercase">{{ v.name }}</span>
+          </div>
+          <span class="text-2xl font-black italic text-k-green">S/ {{ v.price | number:'1.2-2' }}</span>
+        </div>
+      </k-button>
+    }
+  </div>
+
+  <footer class="mt-10 w-full pt-8 border-t border-white/5">
+    <k-button variant="ghost" size="lg" customClass="w-full opacity-30" (kClick)="onClose()">Cancelar</k-button>
+  </footer>
+</k-card>

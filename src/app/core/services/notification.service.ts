@@ -85,6 +85,16 @@ export class NotificationService {
     this.unreadCount.update(c => c + 1);
   }
 
+  public notifyBirthday(customerName: string, daysLeft: number) {
+    const title = '🎂 ¡Cumpleaños Cercano!';
+    const body = daysLeft === 0 
+      ? `¡Hoy es el cumpleaños de ${customerName}!` 
+      : `${customerName} cumple años en ${daysLeft} día(s).`;
+      
+    this.showNotification(title, body);
+    this.addNotificationToList('birthday-' + customerName, title, body);
+  }
+
   public markAllAsRead() {
     this.notifications.update(current => 
       current.map(n => ({ ...n, read: true }))

@@ -1,50 +1,59 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source "./app/**/*.{html,ts}";
 
 @theme {
+  /* Kimsa Core Colors */
   --color-k-red: #e02f2f;
   --color-k-red-dark: #b82525;
   --color-k-red-light: #f87272;
-  --color-k-primary: #e02f2f;
-  --color-k-pos-bg: #c7302b;
-  --color-k-pos-sidebar: #a62621;
-  --color-k-pos-button: #d33630;
-  --color-k-card-yellow: #ffca28;
   --color-k-green: #16a34a;
   --color-k-green-dark: #15803d;
   --color-k-green-light: #d1fae5;
-  --color-k-yellow: #ffc94a;
-  --color-k-yellow-dark: #e0a924;
-  --color-k-bg: #020202;
-  --color-k-admin-shell: #f3f4f6;
-  --color-k-header-dark: #1f2933;
-  --color-k-surface: rgba(255, 255, 255, 0.05);
-  --color-k-border: rgba(255, 255, 255, 0.08);
-  --color-k-text: #ffffff;
-  --color-k-text-muted: rgba(255, 255, 255, 0.45);
-  --color-k-text-dim: rgba(255, 255, 255, 0.22);
-  --color-k-ink: #1f2933;
-  --color-k-ink-muted: rgba(31, 41, 51, 0.55);
-  --color-k-ink-faint: rgba(31, 41, 51, 0.25);
-
-  --font-outfit: "Outfit", sans-serif;
-  --radius-k-xl: 40px;
-  --radius-k-lg: 24px;
+  /* Luxury & UI Accents */
+  --color-k-gold: #d4af37;
+  --color-k-gold-light: #f9e29d;
+  --color-k-info: #0ea5e9;
+  --color-k-warning: #f59e0b;
+  /* Neutral & Surfaces */
+  --color-k-bg: #050505;
+  --color-k-surface: rgba(255, 255, 255, 0.03);
+  --color-k-border: rgba(255, 255, 255, 0.06);
+  --color-k-glass-border: rgba(255, 255, 255, 0.12);
+  /* Typography */
+  --font-outfit: 'Outfit', sans-serif;
+  --tracking-luxury: 0.15em;
+  /* Radii */
+  --radius-k-sm: 8px;
   --radius-k-md: 16px;
-  --radius-k-sm: 10px;
-
-  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  --blur-k-glass: blur(25px);
+  --radius-k-lg: 24px;
+  --radius-k-xl: 32px;
+  --radius-k-2xl: 40px;
+  --radius-k-3xl: 48px;
+  /* Enhanced Shadows & Blurs */
+  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  --shadow-gold: 0 10px 30px -10px rgba(212, 175, 55, 0.3);
+  --blur-k-glass: blur(35px);
 }
-
 @layer base {
   :root {
     --k-red: #e02f2f;
     --k-green: #16a34a;
   }
+  
+  /* Reset total para diálogos transparentes */
+  .bg-transparent .mdc-dialog__surface,
+  .bg-transparent .mat-mdc-dialog-container .mdc-dialog__surface,
+  .bg-transparent .mat-mdc-dialog-surface {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 40px !important; /* Forzamos el radio para evitar el leak blanco */
+    overflow: hidden !important;
+  }
 
   .mat-icon {
-    font-family: "Material Symbols Rounded", sans-serif;
+    font-family: 'Material Symbols Rounded', sans-serif;
     font-weight: normal;
     font-style: normal;
     font-size: 24px;
@@ -55,65 +64,58 @@
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
-    font-feature-settings: "liga";
+    font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
   }
-
   body {
     @apply m-0 p-0 antialiased;
-    font-family: "Outfit", sans-serif;
+    font-family: 'Outfit', sans-serif;
     background: #f3f4f6;
     color: #1f2933;
   }
 }
-
 @layer components {
   .glass-morphism {
     @apply bg-white/[0.05] backdrop-blur-[25px] border border-white/10;
   }
-  
-  .animate-nebula {
-    animation: nebula-rotate 20s linear infinite;
-  }
 }
-
-@keyframes nebula-rotate {
-  0% {
-    transform: rotate(0deg) scale(1.1);
-    opacity: 1;
+/* Global Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  50% {
-    transform: rotate(180deg) scale(1.15);
-    opacity: 0.95;
-  }
-  100% {
-    transform: rotate(360deg) scale(1.1);
+  to {
     opacity: 1;
   }
 }
 
-@keyframes particle-float {
-  0% {
-    transform: translateY(0) translateX(0);
+@keyframes toastIn {
+  from {
     opacity: 0;
+    transform: translateY(-20px);
   }
-  20% {
-    opacity: 0.35;
-  }
-  80% {
-    opacity: 0.35;
-  }
-  100% {
-    transform: translateY(-100vh) translateX(12px);
-    opacity: 0;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
-
-/* Angular Material Dialog Overrides for Transparent Custom UI */
-.bg-transparent .mdc-dialog__surface,
-.bg-transparent .mat-mdc-dialog-container .mdc-dialog__surface {
-  background: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+.animate-fade {
+  animation: fadeIn 0.4s ease-out;
+}
+.animate-toast {
+  animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Global Modal Utilities */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scroll-none::-webkit-scrollbar {
+  display: none;
 }

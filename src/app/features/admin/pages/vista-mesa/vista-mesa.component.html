@@ -1,0 +1,23 @@
+<k-card padding="lg" radius="xl">
+  <k-page-header 
+    title="Gestión de Mesas" 
+    subtitle="Configura la capacidad y estado de tu salón"
+    icon="table_bar"
+  >
+    <k-button (kClick)="openTableDialog()">+ Nueva Mesa</k-button>
+  </k-page-header>
+  
+  <div class="flex flex-col gap-2.5 mt-8">
+    @for (t of tables(); track t.id) {
+      <k-table-admin-item 
+        [table]="t" 
+        (onEdit)="openTableDialog($event)" 
+        (onDelete)="deleteTable($event)">
+      </k-table-admin-item>
+    } @empty {
+      <div class="py-20 text-center opacity-20 font-black text-[10px] uppercase tracking-[3px] border border-dashed border-white/5 rounded-[32px]">
+        No hay mesas registradas en el salón
+      </div>
+    }
+  </div>
+</k-card>

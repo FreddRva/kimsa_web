@@ -1,0 +1,28 @@
+<div class="p-8 bg-[#0d0d0d] text-white rounded-[32px] border border-white/5 shadow-2xl">
+  <k-page-header 
+    [title]="isEditing ? 'Editar Cliente' : 'Nuevo Cliente'" 
+    subtitle="Datos de fidelización"
+    [icon]="isEditing ? 'person_edit' : 'person_add'"
+    class="mb-8"
+  ></k-page-header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-[400px]">
+    <k-input label="Nombre Completo" [(value)]="customerData.name" icon="person" placeholder="Ej. Juan Pérez"></k-input>
+    <k-input label="DNI / Documento" [(value)]="customerData.dni" icon="badge" placeholder="8 dígitos"></k-input>
+    <k-input label="Celular" [(value)]="customerData.phone" icon="call" placeholder="999 999 999"></k-input>
+    <k-input label="Red Social" [(value)]="customerData.social" icon="share" placeholder="@usuario"></k-input>
+    
+    <div class="md:col-span-2">
+      <k-input label="Fecha de Nacimiento" type="date" [(value)]="customerData.birthday" icon="cake"></k-input>
+    </div>
+
+    @if (errorMessage()) {
+      <k-badge variant="danger" customClass="md:col-span-2 !justify-center py-4">{{ errorMessage() }}</k-badge>
+    }
+  </div>
+
+  <footer class="flex justify-end gap-4 mt-10 pt-8 border-t border-white/5">
+    <k-button variant="ghost" (kClick)="dialogRef.close()">Cancelar</k-button>
+    <k-button size="lg" customClass="!px-10" (kClick)="onSave()" [loading]="loading()">Guardar Cliente</k-button>
+  </footer>
+</div>

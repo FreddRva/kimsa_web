@@ -44,41 +44,14 @@
       <div class="no-scrollbar min-h-0 flex-1 overflow-y-auto p-6 md:p-10">
         <div class="mx-auto flex max-w-[1400px] flex-col gap-6 animate-fade">
           @switch (selectedTab()) {
-            @case (0) {
-              <app-dashboard-view [stats]="stats()" [paidOrders]="paidOrders()"> </app-dashboard-view>
-            }
-            @case (1) {
-              <app-menu-view
-                [filteredProducts]="filteredProducts()"
-                [categories]="categories()"
-              >
-              </app-menu-view>
-            }
-            @case (2) {
-              <app-category-view
-                [categories]="categories()"
-              >
-              </app-category-view>
-            }
-            @case (3) {
-              <app-station-distribution-view
-                [categories]="categories()"
-                [products]="products()"
-              >
-              </app-station-distribution-view>
-            }
-            @case (4) {
-              <app-table-view [tables]="tables()"></app-table-view>
-            }
-            @case (5) {
-              <app-employee-view
-                [users]="users()"
-              >
-              </app-employee-view>
-            }
-            @case (6) {
-              <app-settings-view></app-settings-view>
-            }
+            @case (0) { <vista-dashboard></vista-dashboard> }
+            @case (1) { <vista-menu-admin></vista-menu-admin> }
+            @case (2) { <vista-categoria></vista-categoria> }
+            @case (3) { <vista-distribucion-estaciones></vista-distribucion-estaciones> }
+            @case (4) { <vista-mesa-admin></vista-mesa-admin> }
+            @case (5) { <vista-empleado></vista-empleado> }
+            @case (6) { <vista-configuracion></vista-configuracion> }
+            @case (7) { <vista-cliente-admin></vista-cliente-admin> }
           }
         </div>
       </div>

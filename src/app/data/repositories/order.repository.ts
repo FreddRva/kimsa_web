@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, query, where, doc, updateDoc, serverTimestamp, addDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Order } from '@shared/models';
+import { Order } from '../../core/domain/order/order.model';
+import { OrderRepositoryPort } from '../../core/domain/order/order.repository.port';
 
 @Injectable({ providedIn: 'root' })
-export class OrderRepository {
+export class OrderRepository implements OrderRepositoryPort {
   private firestore = inject(Firestore);
 
   getActiveOrders(): Observable<Order[]> {
@@ -25,7 +26,7 @@ export class OrderRepository {
     return collectionData(q, { idField: 'id' }) as Observable<Order[]>;
   }
 
-  confirmPayment(orderId: string, method: string, tableId?: string, docType: string = 'Ticket', docNumber: string = '') {
+  confirmPayment(orderId: string, method: string, tableId?: string, docType: string = 'Ticket', docNumber: string = ''): Promise<void> {
     const orderDoc = doc(this.firestore, `orders/${orderId}`);
     const promise = updateDoc(orderDoc, { 
       status: 'paid', 
@@ -37,23 +38,23 @@ export class OrderRepository {
     
     if (tableId && tableId !== 'delivery') {
       const tableDoc = doc(this.firestore, `tables/${tableId}`);
-      return Promise.all([promise, updateDoc(tableDoc, { status: 'available', currentOrderId: null })]);
+      return Promise.all([promise, updateDoc(tableDoc, { status: 'available', currentOrderId: null })]) as unknown as Promise<void>;
     }
     return promise;
   }
 
-  cancelOrder(orderId: string, tableId?: string) {
+  cancelOrder(orderId: string, tableId?: string): Promise<void> {
     const orderDoc = doc(this.firestore, `orders/${orderId}`);
     const promise = updateDoc(orderDoc, { status: 'cancelled' });
     
     if (tableId && tableId !== 'delivery') {
       const tableDoc = doc(this.firestore, `tables/${tableId}`);
-      return Promise.all([promise, updateDoc(tableDoc, { status: 'available', currentOrderId: null })]);
+      return Promise.all([promise, updateDoc(tableDoc, { status: 'available', currentOrderId: null })]) as unknown as Promise<void>;
     }
     return promise;
   }
 
-  sendToKitchen(orderData: any) { 
+  async sendToKitchen(orderData: Partial<Order>): Promise<unknown> { 
     return addDoc(collection(this.firestore, 'orders'), orderData); 
   }
 }
