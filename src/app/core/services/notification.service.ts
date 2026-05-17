@@ -57,13 +57,15 @@ export class NotificationService {
           const id = change.doc.id;
 
           if (!this.notifiedOrderIds.has(id)) {
+            const title = role === 'Cajero' ? '🔔 ¡Nuevo Pedido Recibido!' : '🍽️ Nuevo Pedido';
+            const body = `Mesa ${data['tableNumber'] || data['tableId']} ha enviado un nuevo pedido.`;
+            
             if (!isInitialLoad) {
-              const title = role === 'Cajero' ? '🔔 ¡Nuevo Pedido Recibido!' : '🍽️ Nuevo Pedido';
-              const body = `Mesa ${data['tableNumber'] || data['tableId']} ha enviado un nuevo pedido.`;
-              
-              this.showNotification(title, body);
-              this.addNotificationToList(id, title, body);
+              this.showNotification(title, body); // Alerta nativa y sonido solo para eventos en tiempo real
             }
+            
+            // Siempre agregamos a la lista de notificaciones para que el Admin/Cajero esté enterado al ingresar
+            this.addNotificationToList(id, title, body);
             this.notifiedOrderIds.add(id);
           }
         }

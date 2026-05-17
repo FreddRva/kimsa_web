@@ -30,6 +30,11 @@ export class NexusOrdersListComponent {
   formatTime(ts: FirestoreTimestampInput | null | undefined) {
     if (!ts) return '--:--';
     const d = normalizeTimestamp(ts);
-    return d ? d.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }) : '--:--';
+    if (!d) return '--:--';
+    const timeStr = d.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const day = d.getDate();
+    const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const monthStr = months[d.getMonth()];
+    return `${day}-${monthStr}., ${timeStr}`;
   }
 }

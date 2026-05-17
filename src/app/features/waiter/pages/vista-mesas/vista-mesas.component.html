@@ -28,15 +28,17 @@
           <div
             [class]="
               'w-12 h-12 rounded-2xl flex items-center justify-center ' +
-              (table.status === 'occupied' ? 'bg-white/5' : 'bg-green-600/10 text-green-600')
+              (table.status === 'occupied' ? 'bg-k-red/15 text-k-red' : 'bg-k-green/15 text-k-green')
             "
           >
-            <mat-icon>{{ table.status === 'occupied' ? 'person_off' : 'restaurant' }}</mat-icon>
+            <span class="material-symbols-rounded text-2xl">table_restaurant</span>
           </div>
-          <span class="text-lg font-black italic">MESA {{ table.number }}</span>
-          <span class="text-[9px] font-black opacity-30 uppercase tracking-widest">{{
-            table.status === 'occupied' ? 'OCUPADA' : 'LIBRE'
-          }}</span>
+          <span [class]="'text-lg font-black italic ' + (table.status === 'occupied' ? 'text-k-red' : 'text-white')">
+            MESA {{ table.number }}
+          </span>
+          <span [class]="'text-[9px] font-black uppercase tracking-widest ' + (table.status === 'occupied' ? 'text-k-red/60' : 'text-white/30')">
+            {{ table.status === 'occupied' ? 'OCUPADA' : 'LIBRE' }}
+          </span>
         </div>
       </k-card>
     }

@@ -36,34 +36,46 @@ export class StaffFacade {
     password: string;
   }): Promise<void> {
     const cleanEmail = data.email.trim().toLowerCase();
-    // 1. Verificar si ya existe en la base de datos (incluso si fue eliminado anteriormente)
     const existingUsers = await this.repository.getStaffByEmail(cleanEmail);
-    const deletedUser = existingUsers.find((u) => u.isDeleted);
     
-    if (deletedUser) {
-      // Si estaba eliminado, lo reactivamos automáticamente con los nuevos datos
-      await this.repository.updateUser(deletedUser.id ?? deletedUser.uid, {
+    // Si existe algún usuario previo con ese correo (ya sea activo o eliminado) en Firestore
+    const previousUser = existingUsers[0];
+
+    if (previousUser) {
+      // 1. Desactivar y limpiar cualquier registro duplicado fantasma por seguridad
+      for (let i = 1; i < existingUsers.length; i++) {
+        await this.repository.updateUser(existingUsers[i].id || existingUsers[i].uid, { isDeleted: true });
+      }
+
+      // 2. Reactivar/actualizar el registro principal
+      let uid = previousUser.uid || previousUser.id || '';
+      try {
+        const newUserAuth = await this.authService.createSecondaryUser(cleanEmail, data.password);
+        uid = newUserAuth.uid;
+      } catch (authErr: any) {
+        // Si ya está registrado en Firebase Auth, está perfecto, usamos su UID existente
+      }
+
+      await this.repository.updateUser(previousUser.id || previousUser.uid, {
+        uid,
         name: data.name,
         role: data.role as UserRole,
+        password: data.password,
         isDeleted: false,
+        isActive: true
       });
       return;
     }
 
-    const activeUser = existingUsers.find((u) => !u.isDeleted);
-    if (activeUser) {
-      throw new Error('Este correo electrónico ya está registrado por otro empleado activo.');
-    }
-
+    // 3. Si es completamente nuevo, creamos la credencial en Firebase Auth y guardamos el documento
     try {
-      // 2. Si es completamente nuevo, creamos el usuario en Firebase Auth y Firestore
       const newUserAuth = await this.authService.createSecondaryUser(cleanEmail, data.password);
       await this.repository.addUserDoc(newUserAuth.uid, {
         uid: newUserAuth.uid,
         email: cleanEmail,
         name: data.name,
         role: data.role as UserRole,
-        password: data.password, // Almacenamos la contraseña en el documento para login directo
+        password: data.password,
         isDeleted: false,
         isActive: true,
       });
@@ -79,32 +91,15 @@ export class StaffFacade {
     id: string,
     data: { name: string; role: string; password?: string },
   ): Promise<void> {
-    if (!id) {
-      throw new Error('El ID de empleado no es válido o está vacío.');
-    }
+    if (!id) throw new Error('El ID del empleado no es válido.');
     const updateData: Partial<User> = { name: data.name, role: data.role as UserRole };
     if (data.password) updateData.password = data.password;
     await this.repository.updateUser(id, updateData);
   }
 
-  async reactivateDeletedEmployee(
-    email: string,
-    data: { name: string; role: string },
-  ): Promise<boolean> {
-    const existingUsers = await this.repository.getStaffByEmail(email);
-    const deletedUser = existingUsers.find((u) => u.isDeleted);
-    if (deletedUser) {
-      await this.repository.updateUser(deletedUser.id ?? deletedUser.uid, {
-        name: data.name,
-        role: data.role as UserRole,
-        isDeleted: false,
-      });
-      return true;
-    }
-    return false;
-  }
-
   async deleteUser(id: string) {
+    if (!id) return;
     await this.repository.deleteUser(id);
+    this.loadStaff(); // Refrescar el listado inmediatamente
   }
 }

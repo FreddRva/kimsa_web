@@ -15,7 +15,7 @@ import { ProductStationItemComponent } from '../../components/product-station-it
 })
 export class VistaDistribucionEstacionesComponent implements OnInit {
   private categoryFacade = inject(CategoryFacade);
-  private productFacade = inject(ProductFacade);
+  public productFacade = inject(ProductFacade);
   public stationFacade = inject(StationFacade);
   categories = this.categoryFacade.categories;
   isSaving = signal(false);

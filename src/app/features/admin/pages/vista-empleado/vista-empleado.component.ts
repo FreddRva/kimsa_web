@@ -46,7 +46,7 @@ export class VistaEmpleadoComponent {
       },
     });
     ref.afterClosed().subscribe((result) => {
-      if (result) this.staffFacade.deleteUser(employee.uid || employee.id || '');
+      if (result) this.staffFacade.deleteUser(employee.id || employee.uid || '');
     });
   }
 }

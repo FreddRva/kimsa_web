@@ -23,6 +23,7 @@ export class NexusOrderDetailComponent {
   @Input() customerDocument: string = '';
 
   @Output() cancelOrder = new EventEmitter<Order>();
+  @Output() printOrder = new EventEmitter<Order>();
   @Output() methodChange = new EventEmitter<number>();
   @Output() documentTypeChange = new EventEmitter<string>();
   @Output() customerDocumentChange = new EventEmitter<string>();

@@ -11,7 +11,7 @@ import { KBadgeComponent } from '../../../ui/base/badge/badge.component';
   selector: 'app-login',
   standalone: true,
   imports: [KInputComponent, KButtonComponent, KBadgeComponent],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
   private authService = inject(AuthService);
@@ -24,9 +24,10 @@ export class LoginComponent {
   isLoading = signal(false);
 
   constructor() {
+    // Redirección reactiva centralizada
     effect(() => {
       const data = this.authService.currentUserData();
-      if (data) {
+      if (data && !data.isDeleted) {
         const role = String(data.role || '').toLowerCase();
         if (role === 'waiter' || role === 'mozo') this.router.navigate(['/mozo']);
         else if (role === 'cashier' || role === 'cajero') this.router.navigate(['/caja']);
@@ -41,64 +42,49 @@ export class LoginComponent {
       this.loginError.set('COMPLETA TODOS LOS CAMPOS');
       return;
     }
+
     this.isLoading.set(true);
     this.loginError.set(null);
 
     try {
-      // 1. Auth por Firestore (Claves manuales de Admin)
+      // 1. Pre-validación en base de datos (Firestore)
       const users = await this.staffRepo.getStaffByEmail(email);
-      const user = users.find(u => (u.email || '').toLowerCase() === email);
-      
+      const user = users.find((u) => (u.email || '').toLowerCase() === email && !u.isDeleted);
+
       if (!user) {
         this.loginError.set('EL CORREO ELECTRÓNICO NO EXISTE');
         this.isLoading.set(false);
         return;
       }
-      
-      if (user.password) {
-        if (user.password === this.password) {
-          this.authService.setCustomUser(user);
-          this.isLoading.set(false);
-          return;
-        } else {
-          this.loginError.set('CONTRASEÑA INCORRECTA');
-          this.isLoading.set(false);
-          return;
-        }
-      }
     } catch (e) {
-      console.error('Error Firestore Login', e);
+      console.error('Firestore pre-check error:', e);
+      // Si falla la pre-validación por falta de permisos de lectura antes de loguearse,
+      // dejamos que el paso 2 (Firebase Auth) haga la autenticación oficial de Google.
     }
 
-    // 2. Firebase Auth Tradicional
+    // 2. Autenticación oficial por Firebase Auth (Garantiza token válido de Google)
     this.authService.login(email, this.password)
       .pipe(
         switchMap((cred) => this.authService.getUserData(cred.user.uid)),
+        finalize(() => this.isLoading.set(false)),
         catchError((err: any) => {
           const code = err?.code || '';
-          if (code === 'auth/too-many-requests' || err?.message?.includes('too-many-requests')) {
-            this.loginError.set('DEMASIADOS INTENTOS. CUENTA BLOQUEADA TEMPORALMENTE.');
-          } else if (
-            code === 'auth/invalid-credential' || 
-            code === 'auth/wrong-password' || 
-            code === 'auth/user-not-found' ||
-            err?.message?.includes('invalid-credential')
-          ) {
-            this.loginError.set('CONTRASEÑA INCORRECTA');
-          } else {
-            this.loginError.set('ERROR AL INICIAR SESIÓN');
-          }
+          const isTooMany = code === 'auth/too-many-requests' || err?.message?.includes('too-many-requests');
+          this.loginError.set(isTooMany ? 'DEMASIADOS INTENTOS. CUENTA BLOQUEADA TEMPORALMENTE.' : 'CONTRASEÑA INCORRECTA');
           return of(null);
-        }),
-        finalize(() => this.isLoading.set(false)),
+        })
       )
       .subscribe((data) => {
-        if (!data) return;
-        const role = String(data.role ?? '').toLowerCase();
+        if (!data || data.isDeleted) {
+          this.loginError.set('EL CORREO ELECTRÓNICO NO EXISTE');
+          this.authService.logout().subscribe(); // Desloguear de inmediato por seguridad
+          return;
+        }
+        this.authService.setCustomUser(data);
+        const role = String(data.role || '').toLowerCase();
         if (role === 'waiter' || role === 'mozo') this.router.navigate(['/mozo']);
         else if (role === 'cashier' || role === 'cajero') this.router.navigate(['/caja']);
         else if (role === 'admin') this.router.navigate(['/admin']);
-        else this.loginError.set('ROL NO RECONOCIDO');
       });
   }
 }

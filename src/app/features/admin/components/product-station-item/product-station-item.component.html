@@ -66,16 +66,20 @@
               <span class="material-symbols-rounded opacity-20 text-sm">arrow_forward</span>
             </div>
             <div class="flex items-center gap-4">
-              <k-select
-                variant="minimal"
-                [options]="stationFacade.miniStationOptions"
-                [value]="comp.station"
-                (valueChange)="stationFacade.updateComponentStation(product.id, i, $event)"
-              >
-              </k-select>
+              <div class="flex items-center gap-1.5">
+                @for (c of ['C1', 'C2']; track c) {
+                  <button
+                    (click)="stationFacade.updateComponentStation(product.id, i, c)"
+                    class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border transition-all"
+                    [class]="((comp.station || 'C1') === c || (comp.station === '1' && c === 'C1') || (comp.station === '2' && c === 'C2')) ? 'bg-k-green text-black border-k-green' : 'border-white/10 text-white/30 hover:bg-white/5'"
+                  >
+                    {{ c }}
+                  </button>
+                }
+              </div>
               <button
                 (click)="stationFacade.removeComponent(product.id, i)"
-                class="text-red-500/40 hover:text-red-500 transition-colors"
+                class="text-red-500/40 hover:text-red-500 transition-colors ml-1"
               >
                 <span class="material-symbols-rounded text-sm">delete</span>
               </button>

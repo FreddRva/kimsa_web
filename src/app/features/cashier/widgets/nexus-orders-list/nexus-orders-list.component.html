@@ -40,6 +40,13 @@
               <div class="w-1 h-1 rounded-full bg-white/20"></div>
               <span class="text-[9px] font-black text-white/30">{{ formatTime(order.timestamp) }}</span>
             </div>
+            @if (order.items && order.items.length > 0) {
+              <div class="mt-2 text-[9px] font-bold text-white/40 truncate max-w-[240px] lowercase italic">
+                @for (item of order.items; track $index) {
+                  {{ item.quantity }}x {{ item.name }}{{ item.notes ? ' (' + item.notes + ')' : '' }}@if (!$last) {, }
+                }
+              </div>
+            }
           </div>
           
           <!-- Total y Badge -->

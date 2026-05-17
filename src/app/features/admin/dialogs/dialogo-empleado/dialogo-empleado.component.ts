@@ -42,6 +42,17 @@ export class DialogoEmpleadoComponent {
 
   async onSave() {
     if (!this.userData.name || !this.userData.email) { this.errorMessage.set('Nombre y correo son obligatorios.'); return; }
+    
+    // Validar longitud mínima de contraseña de 6 caracteres requerida por Firebase Auth
+    if (!this.isEditing && (!this.passText || this.passText.length < 6)) {
+      this.errorMessage.set('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    if (this.isEditing && this.passText && this.passText.length < 6) {
+      this.errorMessage.set('La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
     this.loading.set(true);
     this.errorMessage.set('');
     try {

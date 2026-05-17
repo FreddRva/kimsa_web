@@ -1,7 +1,9 @@
 import { Injectable, inject, computed } from '@angular/core';
+import { Firestore, collection, addDoc, serverTimestamp } from '@angular/fire/firestore';
 import { OrderFacade } from './order.facade';
 import { TableFacade } from './table.facade';
 import { Order } from '../../domain/order/order.model';
+import { AuthService } from '../../auth/auth.service';
 
 export interface DashboardTransaction extends Order {
   date: Date;
@@ -29,6 +31,8 @@ export interface DashboardStats {
 export class DashboardFacade {
   private orderFacade = inject(OrderFacade);
   private tableFacade = inject(TableFacade);
+  private firestore = inject(Firestore);
+  private authService = inject(AuthService);
 
   paidOrders = this.orderFacade.paidOrders;
   activeTablesCount = computed(() => this.tableFacade.tables().filter(t => t.status === 'occupied').length);
@@ -43,7 +47,12 @@ export class DashboardFacade {
   }
 
   toDate(order: Order): Date {
-    return order.paidAt || order.timestamp;
+    const t = order.paidAt || order.timestamp;
+    if (!t) return new Date();
+    if (t instanceof Date) return t;
+    if (typeof (t as any).toDate === 'function') return (t as any).toDate();
+    if ((t as any).seconds) return new Date((t as any).seconds * 1000);
+    return new Date(t);
   }
 
   getOrderTotal(order: Order): number {
@@ -117,5 +126,24 @@ export class DashboardFacade {
 
   formatPrice(p: number) {
     return (p || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  async closeShift(stats: DashboardStats, shiftOrders: any[]): Promise<void> {
+    const col = collection(this.firestore, 'shifts');
+    const currentUser = this.authService.currentUserData();
+    await addDoc(col, {
+      cashierId: currentUser?.id || currentUser?.uid || '',
+      cashierName: currentUser?.name || 'Cajero',
+      closedAt: serverTimestamp(),
+      stats: {
+        todaySales: stats.todaySales,
+        cash: stats.cash,
+        card: stats.card,
+        digital: stats.digital,
+        cancelled: stats.cancelled,
+        orderCount: stats.orderCount
+      },
+      orders: shiftOrders.map(o => o.id || o.uid || '')
+    });
   }
 }

@@ -1,9 +1,19 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { ProductFacade } from '../facades/product.facade';
 
 @Injectable({ providedIn: 'root' })
 export class StationFacade {
   private productFacade = inject(ProductFacade);
+  
+  constructor() {
+    // Sincronizar reactivamente cuando carguen los productos por primera vez
+    effect(() => {
+      const products = this.productFacade.products();
+      if (products.length > 0 && !this._hasChanges()) {
+        this.initialize();
+      }
+    }, { allowSignalWrites: true });
+  }
   
   // Estados de la vista
   private _tempStations = signal<{ [key: string]: string }>({});
@@ -54,7 +64,7 @@ export class StationFacade {
   }
 
   addComponent(productId: string, name: string) {
-    const comps = [...this._tempComponents()[productId], { name, station: '1' }];
+    const comps = [...this._tempComponents()[productId], { name, station: 'C1' }];
     this._tempComponents.update(prev => ({ ...prev, [productId]: comps }));
     this._hasChanges.set(true);
   }

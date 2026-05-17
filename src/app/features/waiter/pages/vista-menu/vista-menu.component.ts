@@ -7,6 +7,7 @@ import { CartStore } from '../../store/cart.store';
 import { ActiveOrderStore } from '../../store/active-order.store';
 import { KCardComponent } from '../../../../ui/base/card/card.component';
 import { KButtonComponent } from '../../../../ui/base/button/button.component';
+import { TableFacade } from '../../../../core/application/facades/table.facade';
 import { DialogoMesaComponent } from '../../dialogs/dialogo-mesa/dialogo-mesa.component';
 import { DialogoVariacionComponent } from '../../dialogs/dialogo-variacion/dialogo-variacion.component';
 import { DialogoDetallesProductoComponent } from '../../dialogs/dialogo-detalles-producto/dialogo-detalles-producto.component';
@@ -22,6 +23,7 @@ export class VistaMenuComponent {
   private cartStore = inject(CartStore);
   public order = inject(ActiveOrderStore);
   public productFacade = inject(ProductFacade);
+  private tableFacade = inject(TableFacade);
 
   products = this.productFacade.filteredProducts;
   selectedCategory = this.productFacade.selectedCategory;
@@ -48,6 +50,9 @@ export class VistaMenuComponent {
   }
 
   onMesaChip() {
+    if (this.order.isDelivery()) {
+      return; // No abrir selección de mesa si 'Para Llevar' está activo (debe cancelarse primero)
+    }
     if (this.order.selectedTable()) {
       this.order.clearTable();
       return;
@@ -114,6 +119,13 @@ export class VistaMenuComponent {
   mesaActive = computed(() => !!this.order.selectedTable());
   llevarActive = computed(() => this.order.isDelivery());
   
+  isTableOccupied = computed(() => {
+    const t = this.order.selectedTable();
+    if (!t) return false;
+    const dbTable = this.tableFacade.tables().find(x => x.id === t.id);
+    return dbTable ? dbTable.status === 'occupied' : false;
+  });
+
   mesaLabel = computed(() => {
     const t = this.order.selectedTable();
     return t ? `MESA ${t.number}` : 'ELEGIR MESA';

@@ -28,17 +28,22 @@
           variant="glass"
           padding="none"
           radius="lg"
-          [clickable]="t.status !== 'occupied'"
+          [clickable]="true"
           (kClick)="selectTable(t)"
-          [customClass]="'h-28 flex flex-col items-center justify-center gap-1 group border-white/5 ' + (t.status === 'occupied' ? 'opacity-30 grayscale cursor-not-allowed' : 'hover:border-k-green/30')"
+          [customClass]="'h-28 flex flex-col items-center justify-center gap-1 group border-white/5 transition-all duration-300 ' + (t.status === 'occupied' ? 'border-k-red/30 bg-k-red/[0.03] shadow-[0_0_12px_rgba(224,47,47,0.05)] hover:border-k-red/60' : 'hover:border-k-green/30')"
         >
-          <span class="text-[10px] font-black opacity-30 uppercase group-hover:text-k-green group-hover:opacity-100 transition-colors">Mesa</span>
-          <span class="text-3xl font-black italic group-hover:text-k-green transition-colors leading-none">{{ t.number }}</span>
+          <span [class]="'text-[9px] font-black uppercase tracking-[2px] transition-colors ' + (t.status === 'occupied' ? 'text-white/40 group-hover:text-k-red' : 'text-white/40 group-hover:text-k-green')">Mesa</span>
+          <span [class]="'text-3xl font-black italic transition-colors leading-none ' + (t.status === 'occupied' ? 'text-white group-hover:text-k-red' : 'text-white group-hover:text-k-green')">{{ t.number }}</span>
           
           @if (t.status === 'occupied') {
-            <span class="text-[8px] font-black text-red-500 uppercase tracking-widest mt-1">En Uso</span>
+            <span class="text-[8px] font-black text-k-red uppercase tracking-widest mt-1">En Uso</span>
+            @if (getTableActiveItems(t.id)) {
+              <span class="text-[7px] font-bold text-white/30 truncate max-w-[85%] mt-0.5" [title]="getTableActiveItems(t.id)">
+                {{ getTableActiveItems(t.id) }}
+              </span>
+            }
           } @else {
-            <span class="text-[8px] font-black text-k-green uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-all">Libre</span>
+            <span class="text-[8px] font-black text-k-green uppercase tracking-widest mt-1">Libre</span>
           }
         </k-card>
       }

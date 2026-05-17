@@ -7,6 +7,14 @@ export interface OrderItem {
   quantity: number;
   notes?: string;
   variation?: string;
+  
+  // Compatibilidad con la app Flutter (impresión y flujo de comandas)
+  productName?: string;
+  unitPrice?: number;
+  totalItemPrice?: number;
+  station?: string;
+  status?: 'pending' | 'ready';
+  components?: { name: string; station: string }[];
 }
 
 export interface Order {
@@ -26,4 +34,6 @@ export interface Order {
   customerName?: string;
   documentType?: string;
   customerDocument?: string;
+  documentNumber?: string;
+  hash?: string;
 }

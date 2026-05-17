@@ -19,26 +19,40 @@
     </k-button>
   </k-page-header>
 
-  <!--MUESTRA LA LISTA DE PRODUCTOS POR CATEGORÍA-->
-  <div class="flex flex-col gap-12">
-    @for (cat of categories(); track cat.id) {
-      @if (getProductsByCategory(cat.id).length > 0) {
-        <section class="flex flex-col gap-6">
-          <div class="flex items-center gap-4 px-2">
-            <span class="text-[10px] font-black text-k-green uppercase tracking-[4px]">{{
-              cat.name
-            }}</span>
-            <div class="h-px flex-1 bg-white/5"></div>
-          </div>
+  <!--MUESTRA LA LISTA DE PRODUCTOS POR CATEGORÍA CON SKELETON LOADER-->
+  @if (productFacade.loading()) {
+    <div class="flex flex-col gap-10">
+      @for (shimer of [1, 2]; track shimer) {
+        <div class="flex flex-col gap-4 animate-pulse">
+          <div class="h-3.5 bg-white/5 rounded-full w-24 ml-2"></div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @for (product of getProductsByCategory(cat.id); track product.id) {
-              <k-product-station-item [product]="product"></k-product-station-item>
-            }
+            <div class="h-20 bg-white/[0.01] border border-white/5 rounded-[24px]"></div>
+            <div class="h-20 bg-white/[0.01] border border-white/5 rounded-[24px]"></div>
           </div>
-        </section>
+        </div>
       }
-    }
-  </div>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-12">
+      @for (cat of categories(); track cat.id) {
+        @if (getProductsByCategory(cat.id).length > 0) {
+          <section class="flex flex-col gap-6">
+            <div class="flex items-center gap-4 px-2">
+              <span class="text-[10px] font-black text-k-green uppercase tracking-[4px]">{{
+                cat.name
+              }}</span>
+              <div class="h-px flex-1 bg-white/5"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              @for (product of getProductsByCategory(cat.id); track product.id) {
+                <k-product-station-item [product]="product"></k-product-station-item>
+              }
+            </div>
+          </section>
+        }
+      }
+    </div>
+  }
   <!--MENSAJE FLOTANTE-->
   @if (toastMessage()) {
     <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-bounce">

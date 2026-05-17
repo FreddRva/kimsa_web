@@ -130,11 +130,7 @@
     </div>
   </k-card>
 
-  <!-- Estructura del Reporte para Impresión -->
-  <k-report-template title="Reporte de Cierre de Caja">
-    <k-report-finance-summary [stats]="stats()" title="Resumen de Caja (Turno Actual)"></k-report-finance-summary>
-    <k-report-transactions-table [orders]="shiftOrders()" title="Detalle de Operaciones"></k-report-transactions-table>
-  </k-report-template>
+
 
   <!-- Detalle de Boletas / Tickets -->
   <div class="flex flex-col gap-6 mt-4">

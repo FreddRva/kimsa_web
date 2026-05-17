@@ -35,9 +35,14 @@ export class OrderFacade {
 
   private sortOrders(orders: Order[]): Order[] {
     return orders.sort((a, b) => {
-      const ta = a.timestamp ? a.timestamp.getTime() : 0;
-      const tb = b.timestamp ? b.timestamp.getTime() : 0;
-      return tb - ta;
+      const getMs = (t: any) => {
+        if (!t) return 0;
+        if (t instanceof Date) return t.getTime();
+        if (typeof t.toDate === 'function') return t.toDate().getTime();
+        if (t.seconds) return t.seconds * 1000;
+        return new Date(t).getTime();
+      };
+      return getMs(b.timestamp) - getMs(a.timestamp);
     });
   }
 
