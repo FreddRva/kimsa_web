@@ -3,7 +3,6 @@ import { Order } from '../../../core/domain/order/order.model';
 
 @Injectable()
 export class NexusStore {
-  // State
   private _filter = signal('TODAS');
   private _selectedOrderId = signal<string | null>(null);
   private _selectedOrder = signal<Order | null>(null);
@@ -11,7 +10,6 @@ export class NexusStore {
   private _selectedDocumentType = signal('Ticket');
   private _customerDocument = signal('');
 
-  // Expose signals
   filter = computed(() => this._filter());
   selectedOrderId = computed(() => this._selectedOrderId());
   selectedOrder = computed(() => this._selectedOrder());
@@ -19,7 +17,6 @@ export class NexusStore {
   selectedDocumentType = computed(() => this._selectedDocumentType());
   customerDocument = computed(() => this._customerDocument());
 
-  // Actions
   setFilter(f: string) { this._filter.set(f); }
   
   selectOrder(order: Order | null) {

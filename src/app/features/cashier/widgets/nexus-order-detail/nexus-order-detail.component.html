@@ -84,7 +84,7 @@
         }
 
         <!-- Botón de Pago Modular -->
-        <k-hold-button (kComplete)="confirmPayment.emit()">
+        <k-hold-button [disabled]="!order || !order.items || order.items.length === 0" (kComplete)="confirmPayment.emit()">
           <div class="flex items-center gap-3">
             <span class="material-symbols-rounded text-2xl text-k-green">check_circle</span>
             <span class="text-[11px] font-black uppercase tracking-[4px]">Confirmar Pago</span>

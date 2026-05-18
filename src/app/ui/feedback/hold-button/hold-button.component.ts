@@ -5,11 +5,16 @@ import { Component, Input, Output, EventEmitter, signal, OnDestroy } from '@angu
   standalone: true,
   template: `
     <div
-      class="relative h-16 rounded-2xl overflow-hidden cursor-pointer select-none touch-none bg-white/5 border border-white/5 group active:scale-95 transition-transform duration-200"
-      (mousedown)="startPress($event)"
+      class="relative h-16 rounded-2xl overflow-hidden select-none touch-none bg-white/5 border border-white/5 group transition-all duration-200"
+      [class.cursor-pointer]="!disabled"
+      [class.active:scale-95]="!disabled"
+      [class.opacity-25]="disabled"
+      [class.pointer-events-none]="disabled"
+      [class.cursor-not-allowed]="disabled"
+      (mousedown)="!disabled && startPress($event)"
       (mouseup)="stopPress()"
       (mouseleave)="stopPress()"
-      (touchstart)="startPress($event)"
+      (touchstart)="!disabled && startPress($event)"
       (touchend)="stopPress()"
       (touchcancel)="stopPress()"
     >
@@ -48,6 +53,7 @@ import { Component, Input, Output, EventEmitter, signal, OnDestroy } from '@angu
 })
 export class KHoldButtonComponent implements OnDestroy {
   @Input() duration = 1500;
+  @Input() disabled = false;
   @Output() kComplete = new EventEmitter<void>();
 
   isPressing = signal(false);
