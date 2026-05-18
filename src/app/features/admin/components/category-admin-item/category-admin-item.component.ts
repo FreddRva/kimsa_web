@@ -19,7 +19,7 @@ import { Category } from '../../../../core/domain/category/category.model';
       </div>
 
       <div class="flex gap-2.5">
-        <k-button variant="glass" customClass="!p-2 w-10 h-10" (kClick)="onEdit.emit(category)">
+        <k-button variant="glass-interactive" customClass="!p-2 w-10 h-10" (kClick)="onEdit.emit(category)">
           <span class="material-symbols-rounded text-lg">edit</span>
         </k-button>
         <k-button variant="danger" customClass="!p-2 w-10 h-10" (kClick)="onDelete.emit(category)">

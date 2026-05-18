@@ -25,12 +25,12 @@
     <div class="grid grid-cols-3 gap-4">
       @for (t of tables(); track t.id) {
         <k-card
-          variant="glass"
+          [variant]="t.status === 'occupied' ? 'glass-danger' : 'glass-interactive'"
           padding="none"
           radius="lg"
           [clickable]="true"
           (kClick)="selectTable(t)"
-          [customClass]="'h-28 flex flex-col items-center justify-center gap-1 group border-white/5 transition-all duration-300 ' + (t.status === 'occupied' ? 'border-k-red/30 bg-k-red/[0.03] shadow-[0_0_12px_rgba(224,47,47,0.05)] hover:border-k-red/60' : 'hover:border-k-green/30')"
+          customClass="h-28 flex flex-col items-center justify-center gap-1 group"
         >
           <span [class]="'text-[9px] font-black uppercase tracking-[2px] transition-colors ' + (t.status === 'occupied' ? 'text-white/40 group-hover:text-k-red' : 'text-white/40 group-hover:text-k-green')">Mesa</span>
           <span [class]="'text-3xl font-black italic transition-colors leading-none ' + (t.status === 'occupied' ? 'text-white group-hover:text-k-red' : 'text-white group-hover:text-k-green')">{{ t.number }}</span>

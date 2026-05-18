@@ -19,7 +19,7 @@ export class DialogoEmpleadoComponent {
   private staffFacade = inject(StaffFacade);
 
   isEditing = false;
-  userData = { uid: '', name: '', email: '', role: 'waiter' };
+  userData = { id: '', name: '', email: '', role: 'waiter' };
   passText = '';
   loading = signal(false);
   errorMessage = signal('');
@@ -32,7 +32,7 @@ export class DialogoEmpleadoComponent {
       this.isEditing = true;
       const e = data.employee;
       this.userData = {
-        uid: e.uid || e.id || '',
+        id: e.id,
         name: e.name ?? '',
         email: e.email ?? '',
         role: e.role ?? 'waiter'
@@ -58,7 +58,7 @@ export class DialogoEmpleadoComponent {
     try {
       if (this.isEditing) {
         // updateEmployee(id, { name, role, password })
-        await this.staffFacade.updateEmployee(this.userData.uid, { 
+        await this.staffFacade.updateEmployee(this.userData.id, { 
           name: this.userData.name, 
           role: this.userData.role, 
           password: this.passText 

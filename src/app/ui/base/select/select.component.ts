@@ -6,6 +6,7 @@ import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
   templateUrl: './select.component.html',
 })
 export class KSelectComponent<T> {
+  // PARÁMETROS DE ENTRADA Y FUENTE DE DATOS DEL SELECTOR
   @Input() label?: string;
   @Input() icon?: string;
   @Input() placeholder: string = 'Seleccionar...';
@@ -13,10 +14,12 @@ export class KSelectComponent<T> {
   @Input() value?: T;
   @Input() customClass: string = '';
 
+  // EVENTOS DE CAMBIO DE SELECCIÓN Y CONTROL DE ESTADOS DE APERTURA EN TIEMPO REAL
   @Output() valueChange = new EventEmitter<T>();
 
   isOpen = signal(false);
 
+  // LÓGICA DE CONTROL DE INTERACCIÓN (APERTURA, SELECCIÓN Y ETIQUETADO)
   toggle() {
     this.isOpen.update((v) => !v);
   }

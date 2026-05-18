@@ -17,12 +17,14 @@ import { KCardComponent } from '../../../../ui/base/card/card.component';
             <span class="text-3xl font-black italic text-white">{{ value }}</span>
           </div>
           @if (footer) {
-            <span [class]="'text-[9px] font-black uppercase mb-1.5 ' + footerClass">{{ footer }}</span>
+            <span [class]="'text-[9px] font-black uppercase mb-1.5 ' + footerClass">{{
+              footer
+            }}</span>
           }
         </div>
       </div>
     </k-card>
-  `
+  `,
 })
 export class EstadisticaDashboardComponent {
   @Input() icon: string = '';

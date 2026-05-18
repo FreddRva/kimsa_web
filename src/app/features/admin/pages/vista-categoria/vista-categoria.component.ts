@@ -12,22 +12,41 @@ import { Category } from '../../../../core/domain/category/category.model';
 @Component({
   selector: 'vista-categoria',
   standalone: true,
-  imports: [MatDialogModule, KCardComponent, KButtonComponent, KPageHeaderComponent, CategoryAdminItemComponent],
-  templateUrl: './vista-categoria.component.html'
+  imports: [
+    MatDialogModule,
+    KCardComponent,
+    KButtonComponent,
+    KPageHeaderComponent,
+    CategoryAdminItemComponent,
+  ],
+  templateUrl: './vista-categoria.component.html',
 })
 export class VistaCategoriaComponent {
+  //inyeccion de dependencias
   public facade = inject(CategoryFacade);
   private dialog = inject(MatDialog);
 
+  //abre el dialogo para editar una categoria
   openCategoryDialog(category?: Category) {
-    this.dialog.open(DialogoCategoriaComponent, { width: '450px', data: { category }, panelClass: 'bg-transparent' });
+    this.dialog.open(DialogoCategoriaComponent, {
+      width: '450px',
+      data: { category },
+      panelClass: 'bg-transparent',
+    });
   }
-
+  //abre el dialogo para eliminar una categoria
   deleteCategory(category: Category) {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px', panelClass: 'bg-transparent',
-      data: { title: 'Eliminar Categoría', message: `¿Eliminar ${category.name}?`, confirmText: 'Sí, Eliminar' }
+      width: '400px',
+      panelClass: 'bg-transparent',
+      data: {
+        title: 'Eliminar Categoría',
+        message: `¿Eliminar ${category.name}?`,
+        confirmText: 'Sí, Eliminar',
+      },
     });
-    ref.afterClosed().subscribe(result => { if (result) this.facade.deleteCategory(category.id); });
+    ref.afterClosed().subscribe((result) => {
+      if (result) this.facade.deleteCategory(category.id);
+    });
   }
 }

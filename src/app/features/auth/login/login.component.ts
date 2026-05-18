@@ -2,7 +2,6 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, finalize, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
-import { StaffRepository } from '../../../data/repositories/staff.repository';
 import { KInputComponent } from '../../../ui/base/input/input.component';
 import { KButtonComponent } from '../../../ui/base/button/button.component';
 import { KBadgeComponent } from '../../../ui/base/badge/badge.component';
@@ -16,7 +15,6 @@ import { KBadgeComponent } from '../../../ui/base/badge/badge.component';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private staffRepo = inject(StaffRepository);
 
   email = '';
   password = '';
@@ -47,11 +45,9 @@ export class LoginComponent {
     this.loginError.set(null);
 
     try {
-      // 1. Pre-validación en base de datos (Firestore)
-      const users = await this.staffRepo.getStaffByEmail(email);
-      const user = users.find((u) => (u.email || '').toLowerCase() === email && !u.isDeleted);
-
-      if (!user) {
+      // 1. Pre-validación en base de datos (Firestore) a través de AuthService
+      const userExists = await this.authService.preValidateEmail(email);
+      if (!userExists) {
         this.loginError.set('EL CORREO ELECTRÓNICO NO EXISTE');
         this.isLoading.set(false);
         return;

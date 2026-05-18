@@ -26,7 +26,7 @@ import { RestaurantTable } from '../../../../core/domain/table/table.model';
       </div>
 
       <div class="flex gap-2.5 ml-auto">
-        <k-button variant="glass" customClass="!p-2 w-10 h-10" (kClick)="onEdit.emit(table)">
+        <k-button variant="glass-interactive" customClass="!p-2 w-10 h-10" (kClick)="onEdit.emit(table)">
           <span class="material-symbols-rounded text-lg">edit</span>
         </k-button>
         <k-button variant="danger" customClass="!p-2 w-10 h-10" (kClick)="onDelete.emit(table)">

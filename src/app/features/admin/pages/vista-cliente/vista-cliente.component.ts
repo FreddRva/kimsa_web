@@ -27,7 +27,6 @@ export class VistaClienteAdminComponent {
   customers = this.customerFacade.customers;
   filterText = signal('');
   showBirthdaysOnly = signal(false);
-
   filteredCustomers = computed(() => {
     let list = this.customers();
     const text = this.filterText().toLowerCase();
@@ -48,7 +47,7 @@ export class VistaClienteAdminComponent {
     }
     return list;
   });
-
+  //Edita el cliente
   editCustomer(customer: Customer) {
     this.dialog.open(DialogoClienteComponent, {
       data: { customer },

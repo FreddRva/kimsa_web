@@ -76,7 +76,7 @@ export class VistaResumenComponent {
         total: this.cartStore.total(),
         status: 'pending',
         timestamp: new Date(),
-        waiterId: currentUser?.id || currentUser?.uid || '',
+        waiterId: currentUser?.id || '',
         waiterName: currentUser?.name || 'Mozo'
       };
 

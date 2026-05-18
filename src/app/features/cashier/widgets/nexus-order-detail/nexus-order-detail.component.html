@@ -8,7 +8,7 @@
           <span class="text-[10px] font-black tracking-[2px] text-white uppercase">Resumen de Cuenta</span>
         </div>
         <div class="flex gap-2">
-          <k-button variant="glass" size="sm" customClass="!p-0 w-9 h-9 border-white/5 hover:border-k-green/30" (kClick)="printOrder.emit(order)">
+          <k-button variant="glass-interactive" size="sm" customClass="!p-0 w-9 h-9" (kClick)="printOrder.emit(order)">
             <span class="material-symbols-rounded text-xl text-k-green">print</span>
           </k-button>
           <k-button variant="danger" size="sm" customClass="!p-0 w-9 h-9" (kClick)="cancelOrder.emit(order)">

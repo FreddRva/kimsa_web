@@ -1,5 +1,9 @@
 <div class="flex flex-col gap-10 animate-fade">
-  <k-page-header title="Panel de Control" subtitle="Resumen ejecutivo del restaurante" icon="dashboard">
+  <k-page-header
+    title="Panel de Control"
+    subtitle="Resumen ejecutivo del restaurante"
+    icon="dashboard"
+  >
     <k-button variant="glass" (kClick)="onPrint()">
       <div class="flex items-center gap-2">
         <span class="material-symbols-rounded">print</span>
@@ -8,27 +12,39 @@
     </k-button>
   </k-page-header>
 
-  <!-- Stats Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <k-estadistica-dashboard 
-      icon="payments" iconBg="bg-k-green/10 text-k-green" 
-      label="Ventas Hoy" [value]="'S/ ' + formatPrice(stats().todaySales)"
-      [footer]="'+' + stats().orderCount + ' pedidos'" footerClass="text-k-green">
+    <k-estadistica-dashboard
+      icon="payments"
+      iconBg="bg-k-green/10 text-k-green"
+      label="Ventas Hoy"
+      [value]="'S/ ' + formatPrice(stats().todaySales)"
+      [footer]="'+' + stats().orderCount + ' pedidos'"
+      footerClass="text-k-green"
+    >
     </k-estadistica-dashboard>
 
-    <k-estadistica-dashboard 
-      icon="receipt_long" iconBg="bg-blue-500/10 text-blue-500" 
-      label="Ticket Promedio" [value]="'S/ ' + formatPrice(stats().avgTicket)">
+    <k-estadistica-dashboard
+      icon="receipt_long"
+      iconBg="bg-blue-500/10 text-blue-500"
+      label="Ticket Promedio"
+      [value]="'S/ ' + formatPrice(stats().avgTicket)"
+    >
     </k-estadistica-dashboard>
 
-    <k-estadistica-dashboard 
-      icon="table_restaurant" iconBg="bg-orange-500/10 text-orange-500" 
-      label="Mesas Activas" [value]="stats().activeTables.toString()">
+    <k-estadistica-dashboard
+      icon="table_restaurant"
+      iconBg="bg-orange-500/10 text-orange-500"
+      label="Mesas Activas"
+      [value]="stats().activeTables.toString()"
+    >
     </k-estadistica-dashboard>
 
-    <k-estadistica-dashboard 
-      icon="calendar_month" iconBg="bg-purple-500/10 text-purple-500" 
-      label="Ventas Mes" [value]="'S/ ' + formatPrice(stats().monthlySales)">
+    <k-estadistica-dashboard
+      icon="calendar_month"
+      iconBg="bg-purple-500/10 text-purple-500"
+      label="Ventas Mes"
+      [value]="'S/ ' + formatPrice(stats().monthlySales)"
+    >
     </k-estadistica-dashboard>
   </div>
 
@@ -36,23 +52,34 @@
     <!-- Ventas Semanales -->
     <k-card padding="lg" radius="xl" customClass="lg:col-span-2 bg-white/[0.01] border-white/5">
       <div class="flex items-center justify-between mb-8">
-        <span class="text-[10px] font-black opacity-30 uppercase tracking-[4px]">Rendimiento Semanal</span>
+        <span class="text-[10px] font-black opacity-30 uppercase tracking-[4px]"
+          >Rendimiento Semanal</span
+        >
         <k-badge variant="info">Últimos 7 días</k-badge>
       </div>
       <div class="h-[300px] flex items-end justify-between gap-4 px-4">
         @for (day of weeklySales(); track day.day) {
           <div class="flex-1 flex flex-col items-center gap-4 group h-full">
-            <div class="w-full bg-white/5 rounded-t-xl relative overflow-hidden flex items-end flex-1">
-              <div class="w-full bg-gradient-to-t from-k-green to-k-green/40 group-hover:from-k-green group-hover:to-k-green transition-all duration-700 border-t border-white/10 shadow-[0_0_15px_rgba(34,197,94,0.3)]"
-                [style.height.%]="day.height">
-              </div>
-              <div class="absolute top-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
-                <div class="bg-black/80 backdrop-blur-md border border-white/10 px-2 py-1 rounded text-[9px] font-black text-white whitespace-nowrap shadow-xl">
+            <div
+              class="w-full bg-white/5 rounded-t-xl relative overflow-hidden flex items-end flex-1"
+            >
+              <div
+                class="w-full bg-gradient-to-t from-k-green to-k-green/40 group-hover:from-k-green group-hover:to-k-green transition-all duration-700 border-t border-white/10 shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+                [style.height.%]="day.height"
+              ></div>
+              <div
+                class="absolute top-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"
+              >
+                <div
+                  class="bg-black/80 backdrop-blur-md border border-white/10 px-2 py-1 rounded text-[9px] font-black text-white whitespace-nowrap shadow-xl"
+                >
                   S/ {{ formatPrice(day.total) }}
                 </div>
               </div>
             </div>
-            <span class="text-[9px] font-black opacity-20 uppercase tracking-widest">{{ day.day }}</span>
+            <span class="text-[9px] font-black opacity-20 uppercase tracking-widest">{{
+              day.day
+            }}</span>
           </div>
         }
       </div>
@@ -60,16 +87,23 @@
 
     <!-- Top Productos -->
     <k-card padding="lg" radius="xl" customClass="bg-white/[0.01] border-white/5">
-      <div class="mb-8"><span class="text-[10px] font-black opacity-30 uppercase tracking-[4px]">Más Vendidos</span></div>
+      <div class="mb-8">
+        <span class="text-[10px] font-black opacity-30 uppercase tracking-[4px]">Más Vendidos</span>
+      </div>
       <div class="flex flex-col gap-6">
         @for (p of topProducts(); track p.name) {
           <div class="flex flex-col gap-2">
             <div class="flex justify-between items-center">
               <span class="text-xs font-black uppercase tracking-tight">{{ p.name }}</span>
-              <span class="text-[10px] font-black text-k-green italic">S/ {{ formatPrice(p.total) }}</span>
+              <span class="text-[10px] font-black text-k-green italic"
+                >S/ {{ formatPrice(p.total) }}</span
+              >
             </div>
             <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-              <div class="h-full bg-k-green/40 rounded-full" [style.width.%]="topProducts()[0] ? (p.total / topProducts()[0].total * 100) : 0"></div>
+              <div
+                class="h-full bg-k-green/40 rounded-full"
+                [style.width.%]="topProducts()[0] ? (p.total / topProducts()[0].total) * 100 : 0"
+              ></div>
             </div>
           </div>
         }
@@ -77,10 +111,11 @@
     </k-card>
   </div>
 
-  <!-- Últimas Transacciones -->
-  <k-transacciones-dashboard [transactions]="recentTransactions()" [formatPrice]="formatPrice.bind(this)"></k-transacciones-dashboard>
+  <k-transacciones-dashboard
+    [transactions]="recentTransactions()"
+    [formatPrice]="formatPrice.bind(this)"
+  ></k-transacciones-dashboard>
 
-  <!-- Estructura del Reporte para Impresión (Solo Resumen) -->
   <k-report-template title="Resumen del Turno">
     <k-report-finance-summary [stats]="stats()"></k-report-finance-summary>
   </k-report-template>

@@ -32,7 +32,7 @@ import { User } from '../../../../core/domain/staff/staff.model';
         </div>
         
         <div class="flex gap-2.5">
-          <k-button variant="glass" customClass="!p-2 w-10 h-10" (kClick)="onEdit.emit(employee)">
+          <k-button variant="glass-interactive" customClass="!p-2 w-10 h-10" (kClick)="onEdit.emit(employee)">
             <span class="material-symbols-rounded text-lg">edit</span>
           </k-button>
           <k-button variant="danger" customClass="!p-2 w-10 h-10" (kClick)="onDelete.emit(employee)">

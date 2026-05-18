@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'k-badge',
   standalone: true,
+  // PLANTILLA Y MAQUETADO DE LA ETIQUETA (SOPORTA LED INDICADOR Y TEXTO)
   template: `
     <div
       [class]="
@@ -20,10 +21,12 @@ import { Component, Input } from '@angular/core';
   `,
 })
 export class KBadgeComponent {
+  // PROPIEDADES DE ENTRADA Y PARÁMETROS DE DISEÑO
   @Input() variant: 'success' | 'danger' | 'warning' | 'info' | 'ghost' = 'info';
   @Input() dot = false;
   @Input() customClass = '';
 
+  // DETERMINACIÓN DE COLORES DE FONDO, TEXTO Y BORDE SEGÚN LA VARIANTE
   getVariantClass() {
     switch (this.variant) {
       case 'success':
@@ -41,6 +44,7 @@ export class KBadgeComponent {
     }
   }
 
+  // COLORES ASIGNADOS AL LED INDICADOR CENTRAL (DOT) SEGÚN LA VARIANTE
   getDotClass() {
     switch (this.variant) {
       case 'success':

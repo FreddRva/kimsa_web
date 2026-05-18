@@ -1,8 +1,7 @@
 export type UserRole = 'admin' | 'waiter' | 'cashier' | 'chef';
 
 export interface User {
-  uid: string;
-  id?: string;
+  id: string;
   name: string;
   email: string;
   role: UserRole;
@@ -10,5 +9,4 @@ export interface User {
   isDeleted?: boolean;
   photoUrl?: string;
   phone?: string;
-  password?: string;
 }

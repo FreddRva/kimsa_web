@@ -12,7 +12,7 @@ import { RestaurantTable, TableStatus } from '../../../../core/domain/table/tabl
   selector: 'app-dialogo-mesa-admin',
   standalone: true,
   imports: [FormsModule, KButtonComponent, KInputComponent, KPageHeaderComponent, KBadgeComponent],
-  templateUrl: './dialogo-mesa.component.html'
+  templateUrl: './dialogo-mesa.component.html',
 })
 export class DialogoMesaAdminComponent {
   private tableFacade = inject(TableFacade);
@@ -45,7 +45,10 @@ export class DialogoMesaAdminComponent {
   }
 
   async onSave() {
-    if (!this.tableData.number || !this.tableData.capacity) { this.errorMessage.set('Completa todos los campos.'); return; }
+    if (!this.tableData.number || !this.tableData.capacity) {
+      this.errorMessage.set('Completa todos los campos.');
+      return;
+    }
     this.loading.set(true);
     try {
       if (this.isEditing) await this.tableFacade.updateTable(this.tableData.id, this.tableData);

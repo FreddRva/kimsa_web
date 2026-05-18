@@ -11,26 +11,27 @@ export class ProcessPaymentUseCase {
   private firestore = inject(Firestore);
 
   async execute(order: Order, method: string, docType: string, docNumber: string): Promise<void> {
-    // 1. Lógica de Cliente
+    //Logica de cliente
     if (docNumber) {
-      this.customerFacade.saveCustomer(docNumber, { dni: docNumber, name: order.customerName })
-        .catch(err => console.error('[UseCase] Error saving customer:', err));
+      this.customerFacade
+        .saveCustomer(docNumber, { dni: docNumber, name: order.customerName })
+        .catch((err) => console.error('[UseCase] Error saving customer:', err));
     }
 
-    // 2. Lógica de Negocio (SUNAT)
+    //Logica de negocio SUNAT
     const isSunatActive = await this.checkSunatSettings();
     if (isSunatActive && docType !== 'Ticket') {
       alert(`[SUNAT] Enviando ${docType}... Comprobante emitido.`);
     }
 
-    // 3. Persistencia
+    //Persistencia
     await this.repository.confirmPayment(order.id, method, order.tableId, docType, docNumber);
   }
-
+  //Verifica si la sunat esta activa
   private async checkSunatSettings(): Promise<boolean> {
     try {
       const snap = await getDoc(doc(this.firestore, 'settings/general'));
-      return snap.exists() ? (snap.data()['isSunatActive'] || false) : false;
+      return snap.exists() ? snap.data()['isSunatActive'] || false : false;
     } catch {
       return false;
     }

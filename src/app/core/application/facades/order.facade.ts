@@ -11,28 +11,42 @@ export class OrderFacade {
   private firestore = inject(Firestore);
   private customerFacade = inject(CustomerFacade);
   private processPaymentUC = inject(ProcessPaymentUseCase);
-
+  //Obtiene las ordenes activas
   activeOrders = signal<Order[]>([]);
+  //Obtiene las ordenes pagadas
   paidOrders = signal<Order[]>([]);
+  //Obtiene las ordenes canceladas
   cancelledOrders = signal<Order[]>([]);
+  //Indica si esta cargando
   loading = signal<boolean>(false);
+  //Indica si la sunat esta activa
   isSunatActive = false;
-
+  //Carga las ordenes
   constructor() {
     this.loadOrders();
     this.loadSettings();
   }
-
+  //Realiza la peticion a la base de datos para obtener las ordenes
   private loadOrders() {
     this.loading.set(true);
     this.repository.getActiveOrders().subscribe({
-      next: (data) => { this.activeOrders.set(this.sortOrders(data)); this.loading.set(false); },
-      error: (err) => { console.error(err); this.loading.set(false); }
+      next: (data) => {
+        this.activeOrders.set(this.sortOrders(data));
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading.set(false);
+      },
     });
-    this.repository.getPaidOrders().subscribe({ next: (data) => this.paidOrders.set(this.sortOrders(data)) });
-    this.repository.getCancelledOrders().subscribe({ next: (data) => this.cancelledOrders.set(this.sortOrders(data)) });
+    this.repository
+      .getPaidOrders()
+      .subscribe({ next: (data) => this.paidOrders.set(this.sortOrders(data)) });
+    this.repository
+      .getCancelledOrders()
+      .subscribe({ next: (data) => this.cancelledOrders.set(this.sortOrders(data)) });
   }
-
+  //Ordena las ordenes por fecha
   private sortOrders(orders: Order[]): Order[] {
     return orders.sort((a, b) => {
       const getMs = (t: any) => {
@@ -45,15 +59,22 @@ export class OrderFacade {
       return getMs(b.timestamp) - getMs(a.timestamp);
     });
   }
-
+  //Carga la configuracion de la sunat
   async loadSettings() {
     try {
       const snap = await getDoc(doc(this.firestore, 'settings/general'));
       if (snap.exists()) this.isSunatActive = snap.data()['isSunatActive'] || false;
-    } catch (err) { console.error('Error loading settings:', err); }
+    } catch (err) {
+      console.error('Error loading settings:', err);
+    }
   }
-
-  async processPayment(order: Order, method: string, docType: string, docNumber: string): Promise<void> {
+  //Procesa el pago de la orden
+  async processPayment(
+    order: Order,
+    method: string,
+    docType: string,
+    docNumber: string,
+  ): Promise<void> {
     this.loading.set(true);
     try {
       await this.processPaymentUC.execute(order, method, docType, docNumber);
@@ -61,23 +82,37 @@ export class OrderFacade {
       this.loading.set(false);
     }
   }
-
-  async confirmPayment(orderId: string, method: string, tableId?: string, docType?: string, docNumber?: string) {
+  //Confirma el pago de la orden
+  async confirmPayment(
+    orderId: string,
+    method: string,
+    tableId?: string,
+    docType?: string,
+    docNumber?: string,
+  ) {
     this.loading.set(true);
-    try { await this.repository.confirmPayment(orderId, method, tableId, docType, docNumber); }
-    finally { this.loading.set(false); }
+    try {
+      await this.repository.confirmPayment(orderId, method, tableId, docType, docNumber);
+    } finally {
+      this.loading.set(false);
+    }
   }
-
+  //Cancela la orden
   async cancelOrder(orderId: string, tableId?: string) {
     this.loading.set(true);
-    try { await this.repository.cancelOrder(orderId, tableId); }
-    finally { this.loading.set(false); }
+    try {
+      await this.repository.cancelOrder(orderId, tableId);
+    } finally {
+      this.loading.set(false);
+    }
   }
-
+  //Manda la orden a la cocina
   async sendToKitchen(orderData: Partial<Order>) {
     this.loading.set(true);
-    try { await this.repository.sendToKitchen(orderData); }
-    finally { this.loading.set(false); }
+    try {
+      await this.repository.sendToKitchen(orderData);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }
-

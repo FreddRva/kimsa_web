@@ -35,9 +35,10 @@ export class DashboardFacade {
   private authService = inject(AuthService);
 
   paidOrders = this.orderFacade.paidOrders;
-  activeTablesCount = computed(() => this.tableFacade.tables().filter(t => t.status === 'occupied').length);
+  activeTablesCount = computed(
+    () => this.tableFacade.tables().filter((t) => t.status === 'occupied').length,
+  );
 
-  // Lógica de "Día Contable": Si es antes de las 5 AM, todavía se considera el día anterior
   getAccountingDate(date: Date): string {
     const d = new Date(date);
     if (d.getHours() < 5) {
@@ -45,7 +46,7 @@ export class DashboardFacade {
     }
     return d.toDateString();
   }
-
+  //Convierte cualquier formato de fecha a formato Date
   toDate(order: Order): Date {
     const t = order.paidAt || order.timestamp;
     if (!t) return new Date();
@@ -54,24 +55,37 @@ export class DashboardFacade {
     if ((t as any).seconds) return new Date((t as any).seconds * 1000);
     return new Date(t);
   }
-
+  //Obtiene el total de la orden
   getOrderTotal(order: Order): number {
     return order.total ?? 0;
   }
-
+  //Calcula las estadisticas del dashboard
   stats = computed<DashboardStats>(() => {
     const orders = this.paidOrders();
     const todayAccountingStr = this.getAccountingDate(new Date());
-
-    const todayOrders = orders.filter(o => this.getAccountingDate(this.toDate(o)) === todayAccountingStr);
-    
-    const cash = todayOrders.filter(o => o.paymentMethod === 'EFECTIVO').reduce((acc, o) => acc + this.getOrderTotal(o), 0);
-    const card = todayOrders.filter(o => o.paymentMethod === 'TARJETA').reduce((acc, o) => acc + this.getOrderTotal(o), 0);
-    const digital = todayOrders.filter(o => o.paymentMethod === 'YAPE' || o.paymentMethod === 'PLIN' || o.paymentMethod === 'DIGITAL').reduce((acc, o) => acc + this.getOrderTotal(o), 0);
-    
+    //Obtiene las ordenes del dia de hoy
+    const todayOrders = orders.filter(
+      (o) => this.getAccountingDate(this.toDate(o)) === todayAccountingStr,
+    );
+    //Calcula el total de ventas por metodo de pago
+    const cash = todayOrders
+      .filter((o) => o.paymentMethod === 'EFECTIVO')
+      .reduce((acc, o) => acc + this.getOrderTotal(o), 0);
+    const card = todayOrders
+      .filter((o) => o.paymentMethod === 'TARJETA')
+      .reduce((acc, o) => acc + this.getOrderTotal(o), 0);
+    const digital = todayOrders
+      .filter(
+        (o) =>
+          o.paymentMethod === 'YAPE' || o.paymentMethod === 'PLIN' || o.paymentMethod === 'DIGITAL',
+      )
+      .reduce((acc, o) => acc + this.getOrderTotal(o), 0);
+    //Obtiene las ordenes canceladas del dia de hoy
     const cancelledOrders = this.orderFacade.cancelledOrders();
-    const cancelled = cancelledOrders.filter(o => this.getAccountingDate(this.toDate(o)) === todayAccountingStr).reduce((acc, o) => acc + this.getOrderTotal(o), 0);
-
+    const cancelled = cancelledOrders
+      .filter((o) => this.getAccountingDate(this.toDate(o)) === todayAccountingStr)
+      .reduce((acc, o) => acc + this.getOrderTotal(o), 0);
+    //Retorna las estadisticas del dashboard
     return {
       todaySales: todayOrders.reduce((acc: number, o) => acc + this.getOrderTotal(o), 0),
       cash,
@@ -79,60 +93,68 @@ export class DashboardFacade {
       digital,
       cancelled,
       orderCount: todayOrders.length,
-      avgTicket: todayOrders.length > 0 ? (todayOrders.reduce((acc: number, o) => acc + this.getOrderTotal(o), 0) / todayOrders.length) : 0,
+      avgTicket:
+        todayOrders.length > 0
+          ? todayOrders.reduce((acc: number, o) => acc + this.getOrderTotal(o), 0) /
+            todayOrders.length
+          : 0,
       activeTables: this.activeTablesCount(),
-      monthlySales: orders.reduce((acc: number, o) => acc + this.getOrderTotal(o), 0)
+      monthlySales: orders.reduce((acc: number, o) => acc + this.getOrderTotal(o), 0),
     };
   });
-
+  //Calcula las ventas semanales
   weeklySales = computed(() => {
     const days = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
-    const results = days.map(d => ({ day: d, total: 0, height: 0 }));
-    
-    this.paidOrders().forEach(o => {
+    const results = days.map((d) => ({ day: d, total: 0, height: 0 }));
+    //Obtiene las ordenes pagadas
+    this.paidOrders().forEach((o) => {
       const d = this.toDate(o);
       const dayName = days[d.getDay()];
-      const res = results.find(r => r.day === dayName);
+      const res = results.find((r) => r.day === dayName);
       if (res) res.total += this.getOrderTotal(o);
     });
-
-    const max = Math.max(...results.map(r => r.total), 1);
-    results.forEach(r => r.height = Math.max((r.total / max) * 100, 2));
+    //Obtiene el dia de la semana
+    const max = Math.max(...results.map((r) => r.total), 1);
+    results.forEach((r) => (r.height = Math.max((r.total / max) * 100, 2)));
     return results;
   });
-
+  //Obtiene los productos mas vendidos
   topProducts = computed<TopProductPerformance[]>(() => {
-    const products: { [key: string]: { name: string, total: number } } = {};
-    this.paidOrders().forEach(o => {
-      o.items?.forEach(item => {
+    const products: { [key: string]: { name: string; total: number } } = {};
+    this.paidOrders().forEach((o) => {
+      o.items?.forEach((item) => {
         const name = item.name || 'Producto';
         if (!products[name]) products[name] = { name, total: 0 };
-        products[name].total += ((item.price || 0) * (item.quantity || 1));
+        products[name].total += (item.price || 0) * (item.quantity || 1);
       });
     });
-    return Object.values(products).sort((a, b) => b.total - a.total).slice(0, 5);
+    return Object.values(products)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
   });
-
+  //Obtiene las transacciones recientes
   recentTransactions = computed<DashboardTransaction[]>(() => {
     return this.paidOrders()
-      .map(o => ({
+      .map((o) => ({
         ...o,
         date: this.toDate(o),
-        totalAmount: this.getOrderTotal(o)
+        totalAmount: this.getOrderTotal(o),
       }))
       .sort((a, b) => b.date.getTime() - a.date.getTime())
-      .slice(0, 50); // Aumentamos a 50 para que el balance tenga más historial si se necesita
+      .slice(0, 50);
   });
-
+  //Formatea el precio
   formatPrice(p: number) {
-    return (p || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (
+      'S/. ' + p.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    );
   }
-
+  //Imprime el reporte de ventas
   async closeShift(stats: DashboardStats, shiftOrders: any[]): Promise<void> {
     const col = collection(this.firestore, 'shifts');
     const currentUser = this.authService.currentUserData();
     await addDoc(col, {
-      cashierId: currentUser?.id || currentUser?.uid || '',
+      cashierId: currentUser?.id || '',
       cashierName: currentUser?.name || 'Cajero',
       closedAt: serverTimestamp(),
       stats: {
@@ -141,9 +163,9 @@ export class DashboardFacade {
         card: stats.card,
         digital: stats.digital,
         cancelled: stats.cancelled,
-        orderCount: stats.orderCount
+        orderCount: stats.orderCount,
       },
-      orders: shiftOrders.map(o => o.id || o.uid || '')
+      orders: shiftOrders.map((o) => o.id || ''),
     });
   }
 }

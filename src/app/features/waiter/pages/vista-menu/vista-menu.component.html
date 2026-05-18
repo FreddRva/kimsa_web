@@ -1,15 +1,13 @@
 <div class="flex h-full min-h-0 flex-col animate-fade">
-  <!-- Barra de Filtros / Destino (Estilo Cápsula Slim) -->
+  <!-- Barra de Filtros -->
   <div class="no-scrollbar mb-6 overflow-x-auto pb-2">
     <div class="flex min-w-max items-center gap-3">
       <!-- Selector de Mesa -->
       <k-button
         (kClick)="onMesaChip()"
-        [variant]="mesaActive() ? (isTableOccupied() ? 'danger' : 'primary') : 'glass'"
+        [variant]="mesaActive() ? (isTableOccupied() ? 'danger' : 'success') : 'glass'"
         size="sm"
-        customClass="!rounded-full !px-6 !py-2.5 !tracking-widest !transition-all !duration-500 {{
-          mesaActive() ? (isTableOccupied() ? 'shadow-[0_0_15px_rgba(224,47,47,0.4)] !bg-k-red !border-k-red' : 'shadow-[0_0_15px_rgba(34,197,94,0.4)]') : ''
-        }}"
+        [pill]="true"
       >
         <span class="material-symbols-rounded text-lg">{{
           mesaActive() ? 'check_circle' : 'table_bar'
@@ -22,13 +20,9 @@
       <!-- Selector Para Llevar -->
       <k-button
         (kClick)="onLlevarChip()"
-        [variant]="llevarActive() ? 'primary' : 'glass'"
+        [variant]="llevarActive() ? 'info' : 'glass'"
         size="sm"
-        customClass="!rounded-full !px-6 !py-2.5 !tracking-widest !transition-all !duration-500 {{
-          llevarActive()
-            ? '!bg-blue-500 !border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.4)]'
-            : ''
-        }}"
+        [pill]="true"
       >
         <span class="material-symbols-rounded text-lg">{{
           llevarActive() ? 'check_circle' : 'shopping_bag'
@@ -43,16 +37,14 @@
         (kClick)="productFacade.isPopular.set(!isPopular())"
         [variant]="isPopular() ? 'luxury' : 'glass'"
         size="sm"
-        customClass="!rounded-full !px-6 !py-2.5 !tracking-widest !transition-all !duration-500 {{
-          isPopular() ? 'shadow-[0_0_15px_rgba(212,175,55,0.4)]' : ''
-        }}"
+        [pill]="true"
       >
         <span class="material-symbols-rounded text-lg">local_fire_department</span>
         <span class="text-[10px] font-black uppercase">POPULARES</span>
       </k-button>
 
       <!-- MARCA DE AGUA -->
-      <span class="hidden md:block ml-55 text-2xl font-black italic text-white/5 uppercase">
+      <span class="hidden md:block ml-45 text-2xl font-black italic text-white/5 uppercase">
         {{ watermark() }}
       </span>
     </div>
@@ -134,9 +126,9 @@
                 </div>
               } @else {
                 <k-button
-                  variant="glass"
+                  variant="glass-interactive"
                   size="sm"
-                  customClass="w-full !rounded-2xl !py-3 hover:!bg-k-green hover:!text-black"
+                  customClass="w-full"
                   (kClick)="$event.stopPropagation(); onAddItem(p)"
                 >
                   Añadir Orden

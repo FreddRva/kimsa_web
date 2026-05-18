@@ -1,6 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
 import { Product } from '../../../../core/domain/product/product.model';
 import { ProductFacade } from '../../../../core/application/facades/product.facade';
 import { CartStore } from '../../store/cart.store';
@@ -40,7 +41,7 @@ export class VistaMenuComponent {
       backdropClass: 'backdrop-blur-sm',
     });
 
-    const result = await ref.afterClosed().toPromise();
+    const result = await firstValueFrom(ref.afterClosed());
     if (result) {
       if (result.type === 'table') this.order.setTable(result.data);
       else if (result.type === 'delivery') this.order.setDelivery();

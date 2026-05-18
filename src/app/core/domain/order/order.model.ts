@@ -1,4 +1,11 @@
-export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'served' | 'waiting_payment' | 'paid' | 'cancelled';
+export type OrderStatus =
+  | 'pending'
+  | 'preparing'
+  | 'ready'
+  | 'served'
+  | 'waiting_payment'
+  | 'paid'
+  | 'cancelled';
 
 export interface OrderItem {
   productId: string;
@@ -7,8 +14,6 @@ export interface OrderItem {
   quantity: number;
   notes?: string;
   variation?: string;
-  
-  // Compatibilidad con la app Flutter (impresión y flujo de comandas)
   productName?: string;
   unitPrice?: number;
   totalItemPrice?: number;

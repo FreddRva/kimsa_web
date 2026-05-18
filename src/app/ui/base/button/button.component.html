@@ -4,25 +4,27 @@
     'relative overflow-hidden inline-flex items-center justify-center gap-3 font-black tracking-[0.2em] uppercase transition-all duration-500 active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed group ' +
     getVariantClass() +
     ' ' +
+    getRadiusClass() +
+    ' ' +
     getSizeClass() +
     ' ' +
     customClass
   "
   (click)="onClick($event)"
 >
-  <!-- Layer 1: Ambient Glow (Luxury only) -->
+  <!-- Capa 1: Resplandor Ambiental (Solo versión Luxury) -->
   @if (variant === 'luxury') {
     <div
       class="absolute inset-0 bg-k-gold/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"
     ></div>
   }
 
-  <!-- Layer 2: Animated Shine Sweep -->
+  <!-- Capa 2: Efecto de Brillo Animado -->
   <div
     class="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-[35deg] -translate-x-[150%] group-hover:animate-[shine_1.2s_infinite]"
   ></div>
 
-  <!-- Content -->
+  <!-- Contenido del Botón -->
   <div class="relative z-10 flex items-center gap-3">
     @if (loading) {
       <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">

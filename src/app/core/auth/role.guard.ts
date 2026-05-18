@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { map, take, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
+//Obtiene la ruta segun el rol
 const getRoleRoute = (role: string): string => {
   const r = String(role || '').toLowerCase();
   if (r === 'waiter' || r === 'mozo') return '/mozo';
@@ -17,19 +18,19 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    // 1. Si ya tenemos el perfil cargado en memoria (Signal), validar directamente
+    //Si ya tenemos el perfil cargado en memoria, validamos directamente
     const data = authService.currentUserData();
     if (data) {
       const role = String(data.role || '').toLowerCase();
-      const isAllowed = allowedRoles.map(r => r.toLowerCase()).includes(role);
+      const isAllowed = allowedRoles.map((r) => r.toLowerCase()).includes(role);
       if (isAllowed) return of(true);
-      
+
       const targetRoute = getRoleRoute(role);
       router.navigate([targetRoute]);
       return of(false);
     }
 
-    // 2. Si es una carga directa (ej. recarga con F5), consultar el estado con Firebase Auth
+    // Si es una carga directa F5, consultar el estado con Firebase Auth
     return authService.user$.pipe(
       take(1),
       switchMap((u) => {
@@ -42,7 +43,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
           map((userData) => {
             if (userData && !userData.isDeleted) {
               const role = String(userData.role || '').toLowerCase();
-              const isAllowed = allowedRoles.map(r => r.toLowerCase()).includes(role);
+              const isAllowed = allowedRoles.map((r) => r.toLowerCase()).includes(role);
               if (isAllowed) {
                 authService.setCustomUser(userData);
                 return true;
@@ -54,9 +55,9 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
             }
             router.navigate(['/login']);
             return false;
-          })
+          }),
         );
-      })
+      }),
     );
   };
 };

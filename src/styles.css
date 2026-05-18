@@ -39,7 +39,7 @@
     --k-red: #e02f2f;
     --k-green: #16a34a;
   }
-  
+
   /* Reset total para diálogos transparentes */
   .bg-transparent .mdc-dialog__surface,
   .bg-transparent .mat-mdc-dialog-container .mdc-dialog__surface,
@@ -118,4 +118,13 @@
 }
 .scroll-none::-webkit-scrollbar {
   display: none;
+}
+
+/* Utilidad global para ocultar barras de desplazamiento manteniendo el scroll funcional */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important; /* IE y Edge */
+  scrollbar-width: none !important; /* Firefox */
 }

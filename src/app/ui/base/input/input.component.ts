@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'k-input',
   standalone: true,
   imports: [MatIconModule, FormsModule],
+  // MAQUETADO DEL CAMPO DE ENTRADA (SOPORTA ETIQUETA, ICONO Y MENSAJES DE ERROR)
   template: `
     <div class="flex flex-col gap-2 w-full group">
       @if (label) {
@@ -53,6 +54,7 @@ import { FormsModule } from '@angular/forms';
   `,
 })
 export class KInputComponent<T> {
+  // CONFIGURACIÓN DE PROPIEDADES DE ENTRADA Y PARÁMETROS DE TEXTO
   @Input() label?: string;
   @Input() placeholder: string = '';
   @Input() icon?: string;
@@ -60,8 +62,10 @@ export class KInputComponent<T> {
   @Input() value?: T;
   @Input() error?: string;
 
+  // PROCESADOR Y EMISOR DE CAMBIOS DE VALOR DE ENTRADA EN TIEMPO REAL
   @Output() valueChange = new EventEmitter<T>();
 
+  // CONTROLADOR DE EVENTO DE ENTRADA (SOPORTA CONVERSIÓN NUMÉRICA DE DATOS)
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     let val: string | number | null = input.value;
